@@ -1,6 +1,5 @@
 import dev.greenhouseteam.enchiridion.platform;
 
-import dev.greenhouseteam.enchiridion.platform.services.EnchiridionPlatformHelper;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 
