@@ -19,14 +19,13 @@
     "icon": "${mod_id}.png",
     "environment": "*",
     "entrypoints": {
+        "fabric-datagen": [
+            "dev.greenhouseteam.enchiridion.datagen.EnchiridionDatagen"
+        ],
         "main": [
             "dev.greenhouseteam.enchiridion.EnchiridionFabric"
         ]
     },
-    "mixins": [
-        "${mod_id}.mixins.json",
-        "${mod_id}.fabric.mixins.json"
-    ],
     "depends": {
         "fabricloader": "${fabric_loader_range}",
         "fabric-api": "*",

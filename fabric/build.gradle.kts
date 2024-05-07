@@ -13,14 +13,27 @@ repositories {
     }
 }
 
+sourceSets {
+    create("datagen") {
+        compileClasspath += sourceSets["main"].compileClasspath
+        runtimeClasspath += sourceSets["main"].runtimeClasspath
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:${Versions.INTERNAL_MINECRAFT}")
     mappings(loom.officialMojangMappings())
 
     modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
+    modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
+}
 
-    // modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
+tasks {
+    named<JavaCompile>("compileDatagenJava").configure {
+        dependsOn(configurations.getByName("commonJava"))
+        source(configurations.getByName("commonJava"))
+    }
 }
 
 loom {
@@ -39,19 +52,27 @@ loom {
     runs {
         named("client") {
             client()
-            setConfigName("Fabric Client")
+            configName = "Fabric Client"
             setSource(sourceSets["test"])
             ideConfigGenerated(true)
             vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
-            runDir("run")
         }
         named("server") {
             server()
-            setConfigName("Fabric Server")
+            configName = "Fabric Server"
             setSource(sourceSets["test"])
             ideConfigGenerated(true)
             vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
-            runDir("run")
+        }
+        register("datagen") {
+            server()
+            configName = "Fabric Datagen"
+            setSource(sourceSets["datagen"])
+            ideConfigGenerated(true)
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}")
+            vmArg("-Dfabric-api.datagen.modid=${Properties.MOD_ID}")
+            runDir("build/datagen")
         }
     }
 }

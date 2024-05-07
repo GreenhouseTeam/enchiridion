@@ -1,0 +1,35 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.enchiridion.reach"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 1.5,
+          "per_level_above_first": 1.0
+        },
+        "attribute": "minecraft:player.block_interaction_range",
+        "name": "enchantment.enchiridion.reach",
+        "operation": "add_value",
+        "uuid": "164c937c-f04c-4730-b8e9-d299a3a187fa"
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 40,
+    "per_level_above_first": 0
+  },
+  "max_level": 2,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 5
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/mining",
+  "weight": 1
+}

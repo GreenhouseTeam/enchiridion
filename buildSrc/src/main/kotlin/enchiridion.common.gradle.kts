@@ -1,5 +1,6 @@
 import dev.greenhouseteam.enchiridion.gradle.Properties
 import dev.greenhouseteam.enchiridion.gradle.Versions
+import java.util.function.Predicate
 
 plugins {
     base
@@ -96,17 +97,15 @@ tasks {
         "issues" to Properties.ISSUE_TRACKER,
         "sources" to Properties.GITHUB_REPO
     )
-    named<ProcessResources>("processResources").configure {
+
+    val processResourcesTasks = listOf("processResources", "processTestResources", "processDatagenResources")
+
+    withType<ProcessResources>().matching { processResourcesTasks.contains(it.name) }.configureEach {
         inputs.properties(expandProps)
         filesMatching(setOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json")) {
             expand(expandProps)
         }
-    }
-    named<ProcessResources>("processTestResources").configure {
-        inputs.properties(expandProps)
-        filesMatching(setOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json")) {
-            expand(expandProps)
-        }
+        exclude(".cache")
     }
 }
 

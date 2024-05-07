@@ -1,5 +1,7 @@
 import dev.greenhouseteam.enchiridion.gradle.Properties
 import dev.greenhouseteam.enchiridion.gradle.Versions
+import java.io.FileFilter
+import java.io.FilenameFilter
 
 plugins {
     id("enchiridion.common")
@@ -11,6 +13,14 @@ minecraft {
     val aw = file("src/main/resources/${Properties.MOD_ID}.accesswidener")
     if (aw.exists())
         accessWideners(aw)
+}
+
+sourceSets {
+    create("generated") {
+        resources {
+            srcDir("src/generated/resources")
+        }
+    }
 }
 
 dependencies {
@@ -37,5 +47,6 @@ configurations {
 artifacts {
     add("commonJava", sourceSets["main"].java.sourceDirectories.singleFile)
     add("commonResources", sourceSets["main"].resources.sourceDirectories.singleFile)
+    add("commonResources", sourceSets["generated"].resources.sourceDirectories.singleFile)
     add("commonTestResources", sourceSets["test"].resources.sourceDirectories.singleFile)
 }
