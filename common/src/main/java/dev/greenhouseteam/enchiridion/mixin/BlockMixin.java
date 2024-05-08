@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,52 +35,51 @@ import java.util.function.Supplier;
 
 @Mixin(Block.class)
 public class BlockMixin {
+    @Unique
     private static LootParams.Builder enchiridion$builder;
 
     @Inject(method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;"))
-    private static void enchiridion$captureItemStack(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
+    private static void enchiridion$captureBlockDropBuilder(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
         if (level instanceof ServerLevel serverLevel) {
-            LootParams.Builder builder = new LootParams.Builder(serverLevel);
-            builder.withParameter(LootContextParams.TOOL, stack);
-            builder.withParameter(LootContextParams.BLOCK_STATE, state);
-            builder.withOptionalParameter(LootContextParams.THIS_ENTITY, entity);
-            builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
-            enchiridion$builder = builder;
+            enchiridion$builder = new LootParams.Builder(serverLevel);
+            enchiridion$builder.withParameter(LootContextParams.TOOL, stack);
+            enchiridion$builder.withParameter(LootContextParams.BLOCK_STATE, state);
+            enchiridion$builder.withOptionalParameter(LootContextParams.THIS_ENTITY, entity);
+            enchiridion$builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
         }
     }
 
     @Inject(method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
-    private static void enchiridion$resetBuilderLocal(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
+    private static void enchiridion$resetBlockBuilder(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
         enchiridion$builder = null;
     }
 
     @Inject(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void enchiridion$postBlockDropEffectComponents(Level level, Supplier<ItemEntity> supplier, ItemStack stack, CallbackInfo ci, ItemEntity itemEntity) {
-        if (!(level instanceof ServerLevel serverLevel))
+        if (!(level instanceof ServerLevel serverLevel) || enchiridion$builder == null)
             return;
-        if (enchiridion$builder == null)
-            return;
-        LootParams.Builder builder = enchiridion$builder;
-        builder.withParameter(EnchiridionLootContextParams.ITEM_ENTITY, itemEntity);
-        LootContext params1 = new LootContext.Builder(builder.create(EnchiridionLootContextParamSets.BLOCK_DROP)).create(Optional.empty());
+        enchiridion$builder.withParameter(EnchiridionLootContextParams.ITEM_ENTITY, itemEntity);
+        enchiridion$builder.withParameter(LootContextParams.ORIGIN, itemEntity.position());
 
-        ItemStack tool = params1.getParam(LootContextParams.TOOL);
+        ItemStack tool = enchiridion$builder.getParameter(LootContextParams.TOOL);
         for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : tool.getEnchantments().entrySet()) {
-            if (enchantment.getKey().isBound())
+            if (enchantment.getKey().isBound()) {
+                enchiridion$builder.withParameter(LootContextParams.ENCHANTMENT_LEVEL, enchantment.getIntValue());
+                LootContext context = new LootContext.Builder(enchiridion$builder.create(EnchiridionLootContextParamSets.ENCHANTED_BLOCK_DROP)).create(Optional.empty());
                 for (ConditionalEffect<EnchantmentEntityEffect> effect : enchantment.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP)) {
-                    if (effect.matches(params1)) {
+                    if (effect.matches(context)) {
                         LivingEntity living;
-                        if (params1.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof LivingEntity paramLiving)
+                        if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof LivingEntity paramLiving)
                             living = paramLiving;
                         else
                             living = null;
-                        effect.effect().apply(serverLevel, enchantment.getIntValue(), new EnchantedItemInUse(params1.getParam(LootContextParams.TOOL), EquipmentSlot.MAINHAND, living, () -> {
-                            if (living != null) {
+                        effect.effect().apply(serverLevel, context.getParam(LootContextParams.ENCHANTMENT_LEVEL), new EnchantedItemInUse(context.getParam(LootContextParams.TOOL), EquipmentSlot.MAINHAND, living, () -> {
+                            if (living != null)
                                 living.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-                            }
                         }), itemEntity, itemEntity.position());
                     }
                 }
+            }
         }
     }
 }

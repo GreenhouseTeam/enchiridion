@@ -34,6 +34,7 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(
                         ashesEnchantable, 1, 1, Enchantment.constantCost(25), Enchantment.constantCost(50), 8, EquipmentSlotGroup.MAINHAND))
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP, new Ignite(LevelBasedValue.constant(5.0F)))
+                .withEffect(EnchiridionEnchantmentEffectComponents.POST_ENTITY_DROP, new Ignite(LevelBasedValue.constant(5.0F)))
                 .build(EnchiridionEnchantments.ASHES_CURSE.location());
         Enchantment reach = Enchantment.enchantment(
                 Enchantment.definition(

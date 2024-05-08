@@ -11,10 +11,14 @@ import java.util.List;
 
 public class EnchiridionEnchantmentEffectComponents {
     public static final DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>> POST_BLOCK_DROP = DataComponentType.<List<ConditionalEffect<EnchantmentEntityEffect>>>builder()
-            .persistent(ConditionalEffect.codec(EnchantmentEntityEffect.CODEC, EnchiridionLootContextParamSets.BLOCK_DROP).listOf())
+            .persistent(ConditionalEffect.codec(EnchantmentEntityEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_BLOCK_DROP).listOf())
+            .build();
+    public static final DataComponentType<List<ConditionalEffect<EnchantmentEntityEffect>>> POST_ENTITY_DROP = DataComponentType.<List<ConditionalEffect<EnchantmentEntityEffect>>>builder()
+            .persistent(ConditionalEffect.codec(EnchantmentEntityEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_ENTITY_DROP).listOf())
             .build();
 
     public static void registerAll(RegistrationCallback<DataComponentType<?>> callback) {
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("post_block_drop"), POST_BLOCK_DROP);
+        callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("post_entity_drop"), POST_ENTITY_DROP);
     }
 }

@@ -11,6 +11,14 @@
           "duration": 5.0
         }
       }
+    ],
+    "enchiridion:post_entity_drop": [
+      {
+        "effect": {
+          "type": "minecraft:ignite",
+          "duration": 5.0
+        }
+      }
     ]
   },
   "max_cost": {
