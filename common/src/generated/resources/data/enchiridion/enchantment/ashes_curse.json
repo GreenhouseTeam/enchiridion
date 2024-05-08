@@ -4,7 +4,7 @@
     "translate": "enchantment.enchiridion.ashes_curse"
   },
   "effects": {
-    "enchiridion:post_equipment_drops": [
+    "enchiridion:post_block_drop": [
       {
         "effect": {
           "type": "minecraft:ignite",

@@ -21,6 +21,9 @@
     "entrypoints": {
         "main": [
             "dev.greenhouseteam.enchiridion.EnchiridionFabric"
+        ],
+        "fabric-datagen": [
+            "dev.greenhouseteam.enchiridion.datagen.EnchiridionDatagen"
         ]
     },
     "mixins": [

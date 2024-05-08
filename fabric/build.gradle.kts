@@ -13,13 +13,6 @@ repositories {
     }
 }
 
-sourceSets {
-    create("datagen") {
-        compileClasspath += sourceSets["main"].compileClasspath
-        runtimeClasspath += sourceSets["main"].runtimeClasspath
-    }
-}
-
 dependencies {
     minecraft("com.mojang:minecraft:${Versions.INTERNAL_MINECRAFT}")
     mappings(loom.officialMojangMappings())
@@ -27,13 +20,6 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
     modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
-}
-
-tasks {
-    named<JavaCompile>("compileDatagenJava").configure {
-        dependsOn(configurations.getByName("commonJava"))
-        source(configurations.getByName("commonJava"))
-    }
 }
 
 loom {
@@ -67,7 +53,7 @@ loom {
         register("datagen") {
             server()
             configName = "Fabric Datagen"
-            setSource(sourceSets["datagen"])
+            setSource(sourceSets["test"])
             ideConfigGenerated(true)
             vmArg("-Dfabric-api.datagen")
             vmArg("-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}")

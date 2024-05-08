@@ -1,5 +1,6 @@
 package dev.greenhouseteam.enchiridion.datagen;
 
+import com.mojang.serialization.Lifecycle;
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantments;
@@ -8,9 +9,15 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -35,6 +42,11 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(ItemTagProvider::new);
     }
 
+    @Override
+    public void buildRegistry(RegistrySetBuilder registryBuilder) {
+        registryBuilder.add(Registries.ENCHANTMENT, EnchiridionEnchantments::bootstrap);
+    }
+
     public static class EnchantmentProvider extends FabricDynamicRegistryProvider {
         public EnchantmentProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
             super(output, registriesFuture);
@@ -42,23 +54,17 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
 
         @Override
         protected void configure(HolderLookup.Provider registries, Entries entries) {
-            HolderLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
-            HolderSet<Item> miningEnchantable = items.getOrThrow(ItemTags.MINING_ENCHANTABLE);
-            HolderSet<Item> ashesEnchantable = items.getOrThrow(Enchiridion.ItemTags.ASHES_ENCHANTABLE);
+            EnchiridionEnchantments.bootstrap(new BootstrapContext<>() {
+                @Override
+                public Holder.Reference<Enchantment> register(ResourceKey<Enchantment> resourceKey, Enchantment object, Lifecycle lifecycle) {
+                    return (Holder.Reference<Enchantment>) entries.add(resourceKey, object);
+                }
 
-            Enchantment ashesCurse = Enchantment.enchantment(
-                    Enchantment.definition(
-                            ashesEnchantable, 1, 1, Enchantment.constantCost(25), Enchantment.constantCost(50), 8, EquipmentSlotGroup.MAINHAND))
-                    .withEffect(EnchiridionEnchantmentEffectComponents.POST_EQUIPMENT_DROPS, new Ignite(LevelBasedValue.constant(5.0F)))
-                    .build(EnchiridionEnchantments.ASHES_CURSE.location());
-            Enchantment reach = Enchantment.enchantment(
-                    Enchantment.definition(
-                            miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 5), Enchantment.constantCost(40), 2, EquipmentSlotGroup.MAINHAND))
-                    .withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(1.5F, 1.0F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
-                    .build(EnchiridionEnchantments.REACH.location());
-
-            entries.add(EnchiridionEnchantments.ASHES_CURSE, ashesCurse);
-            entries.add(EnchiridionEnchantments.REACH, reach);
+                @Override
+                public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> resourceKey) {
+                    return registries.lookupOrThrow(resourceKey);
+                }
+            });
         }
 
         @Override
@@ -93,6 +99,9 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
         protected void addTags(HolderLookup.Provider wrapperLookup) {
             getOrCreateTagBuilder(Enchiridion.ItemTags.AXE_ENCHANTABLE)
                     .forceAddTag(ItemTags.AXES);
+            getOrCreateTagBuilder(Enchiridion.ItemTags.ASHES_ENCHANTABLE)
+                    .forceAddTag(ItemTags.WEAPON_ENCHANTABLE)
+                    .forceAddTag(ItemTags.MINING_ENCHANTABLE);
         }
     }
 }

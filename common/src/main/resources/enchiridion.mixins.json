@@ -4,7 +4,9 @@
   "package": "dev.greenhouseteam.enchiridion.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "BlockMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
