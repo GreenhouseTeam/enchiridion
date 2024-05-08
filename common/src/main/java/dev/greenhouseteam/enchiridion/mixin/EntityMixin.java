@@ -40,14 +40,12 @@ public abstract class EntityMixin {
         if (!(entity instanceof LivingEntity attacker))
             return original;
 
-        for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : attacker.getMainHandItem().getEnchantments().entrySet()) {
-            if (enchantment.getKey().isBound()) {
-                access.enchiridion$getPostEntityDropsParams().withParameter(LootContextParams.ENCHANTMENT_LEVEL, enchantment.getIntValue());
-                LootContext context = new LootContext.Builder(access.enchiridion$getPostEntityDropsParams().create(EnchiridionLootContextParamSets.ENCHANTED_ENTITY_DROP)).create(Optional.empty());
-                for (ConditionalEffect<EnchantmentEntityEffect> effect : enchantment.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_ENTITY_DROP)) {
-                    if (effect.matches(context)) {
-                        effect.effect().apply(serverLevel, context.getParam(LootContextParams.ENCHANTMENT_LEVEL), new EnchantedItemInUse(attacker.getMainHandItem(), EquipmentSlot.MAINHAND, attacker), original, original.position());
-                    }
+        for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : attacker.getMainHandItem().getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_ENTITY_DROP).isEmpty()).toList()) {
+            access.enchiridion$getPostEntityDropsParams().withParameter(LootContextParams.ENCHANTMENT_LEVEL, enchantment.getIntValue());
+            LootContext context = new LootContext.Builder(access.enchiridion$getPostEntityDropsParams().create(EnchiridionLootContextParamSets.ENCHANTED_ENTITY_DROP)).create(Optional.empty());
+            for (ConditionalEffect<EnchantmentEntityEffect> effect : enchantment.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_ENTITY_DROP)) {
+                if (effect.matches(context)) {
+                    effect.effect().apply(serverLevel, context.getParam(LootContextParams.ENCHANTMENT_LEVEL), new EnchantedItemInUse(attacker.getMainHandItem(), EquipmentSlot.MAINHAND, attacker), original, original.position());
                 }
             }
         }

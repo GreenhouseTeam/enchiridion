@@ -62,22 +62,20 @@ public class BlockMixin {
         enchiridion$builder.withParameter(LootContextParams.ORIGIN, itemEntity.position());
 
         ItemStack tool = enchiridion$builder.getParameter(LootContextParams.TOOL);
-        for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : tool.getEnchantments().entrySet()) {
-            if (enchantment.getKey().isBound()) {
-                enchiridion$builder.withParameter(LootContextParams.ENCHANTMENT_LEVEL, enchantment.getIntValue());
-                LootContext context = new LootContext.Builder(enchiridion$builder.create(EnchiridionLootContextParamSets.ENCHANTED_BLOCK_DROP)).create(Optional.empty());
-                for (ConditionalEffect<EnchantmentEntityEffect> effect : enchantment.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP)) {
-                    if (effect.matches(context)) {
-                        LivingEntity living;
-                        if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof LivingEntity paramLiving)
-                            living = paramLiving;
-                        else
-                            living = null;
-                        effect.effect().apply(serverLevel, context.getParam(LootContextParams.ENCHANTMENT_LEVEL), new EnchantedItemInUse(context.getParam(LootContextParams.TOOL), EquipmentSlot.MAINHAND, living, () -> {
-                            if (living != null)
-                                living.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-                        }), itemEntity, itemEntity.position());
-                    }
+        for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : tool.getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP).isEmpty()).toList()) {
+            enchiridion$builder.withParameter(LootContextParams.ENCHANTMENT_LEVEL, enchantment.getIntValue());
+            LootContext context = new LootContext.Builder(enchiridion$builder.create(EnchiridionLootContextParamSets.ENCHANTED_BLOCK_DROP)).create(Optional.empty());
+            for (ConditionalEffect<EnchantmentEntityEffect> effect : enchantment.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP)) {
+                if (effect.matches(context)) {
+                    LivingEntity living;
+                    if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof LivingEntity paramLiving)
+                        living = paramLiving;
+                    else
+                        living = null;
+                    effect.effect().apply(serverLevel, context.getParam(LootContextParams.ENCHANTMENT_LEVEL), new EnchantedItemInUse(context.getParam(LootContextParams.TOOL), EquipmentSlot.MAINHAND, living, () -> {
+                        if (living != null)
+                            living.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+                    }), itemEntity, itemEntity.position());
                 }
             }
         }
