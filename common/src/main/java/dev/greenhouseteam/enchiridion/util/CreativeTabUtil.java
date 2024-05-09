@@ -42,6 +42,7 @@ public class CreativeTabUtil {
 
             stackList.sort((o1, o2) -> {
                 if (o1.getItem() != o2.getItem())
+                    // TODO: Handle this better.
                     return Integer.compare(unmodifiableStackList.indexOf(o1), unmodifiableStackList.indexOf(o2));
 
                 ItemEnchantments enchantments = o1.getEnchantments();
