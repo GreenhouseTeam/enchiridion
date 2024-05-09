@@ -19,19 +19,10 @@ import java.util.stream.IntStream;
 
 public class CreativeTabUtil {
     public static void sortEnchantmentsBasedOnCategory(List<ItemStack> stacks, HolderLookup.Provider provider) {
-        if (stacks.stream().anyMatch(stack -> {
-            ItemEnchantments enchantments = stack.getEnchantments();
-            if (enchantments.isEmpty())
-                enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-            return !enchantments.isEmpty();
-        })) {
-            List<Pair<Integer, ItemStack>> indexList = new ArrayList<>(IntStream.range(0, stacks.size()).filter(i -> {
-                ItemStack stack = stacks.get(i);
-                ItemEnchantments enchantments = stack.getEnchantments();
-                if (enchantments.isEmpty())
-                    enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-                return !enchantments.isEmpty();
-            }).mapToObj(i -> Pair.of(i, stacks.get(i))).toList());
+        if (stacks.stream().anyMatch(stack -> !EnchiridionUtil.getEnchantmentsOrStoredEnchantments(stack).isEmpty())) {
+            List<Pair<Integer, ItemStack>> indexList = new ArrayList<>(IntStream.range(0, stacks.size())
+                    .filter(i -> !EnchiridionUtil.getEnchantmentsOrStoredEnchantments(stacks.get(i)).isEmpty())
+                    .mapToObj(i -> Pair.of(i, stacks.get(i))).toList());
 
             for (Pair<Integer, ItemStack> stack : indexList)
                 stacks.set(stack.getFirst(), ItemStack.EMPTY);
@@ -45,12 +36,8 @@ public class CreativeTabUtil {
                 if (o1.getItem() != o2.getItem())
                     return Integer.compare(itemList.indexOf(o1.getItem()), itemList.indexOf(o2.getItem()));
 
-                ItemEnchantments enchantments = o1.getEnchantments();
-                if (enchantments.isEmpty())
-                    enchantments = o1.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-                ItemEnchantments enchantments2 = o2.getEnchantments();
-                if (enchantments2.isEmpty())
-                    enchantments2 = o2.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+                ItemEnchantments enchantments = EnchiridionUtil.getEnchantmentsOrStoredEnchantments(o1);
+                ItemEnchantments enchantments2 = EnchiridionUtil.getEnchantmentsOrStoredEnchantments(o2);
 
                 Pair<Holder<Enchantment>, Integer> enchantment = EnchiridionUtil.getFirstEnchantmentAndLevel(provider, enchantments);
                 Pair<Holder<Enchantment>, Integer> enchantment2 = EnchiridionUtil.getFirstEnchantmentAndLevel(provider, enchantments2);

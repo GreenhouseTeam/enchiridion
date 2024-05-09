@@ -8,6 +8,7 @@ import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.EnchantmentTags;
@@ -22,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EnchiridionUtil {
 
@@ -93,7 +92,7 @@ public class EnchiridionUtil {
             return;
 
         List<Component> enchantmentComponents = new ArrayList<>();
-        stack.getEnchantments().addToTooltip(tooltipContext, enchantmentComponents::add, flag);
+        getEnchantmentsOrStoredEnchantments(stack).addToTooltip(tooltipContext, enchantmentComponents::add, flag);
 
         ItemEnchantmentCategories categories = stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY);
         for (int i = 0; i < components.size(); ++i) {
@@ -108,5 +107,12 @@ public class EnchiridionUtil {
                 components.set(i, components.get(i).copy().withColor(category.value().color().getValue()));
             }
         }
+    }
+
+    public static ItemEnchantments getEnchantmentsOrStoredEnchantments(ItemStack stack) {
+        ItemEnchantments enchantments = stack.getEnchantments();
+        if (enchantments.isEmpty())
+            enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        return enchantments;
     }
 }
