@@ -70,19 +70,16 @@ public class EnchiridionUtil {
     }
 
     public static boolean categoryAcceptsNewEnchantments(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
-        if (!category.isBound() || category.value().allowed().isEmpty())
+        if (category == null || !category.isBound() || category.value().allowed().isEmpty())
             return true;
         return categoryAcceptsNewEnchantmentsInternal(category, categories.getCategories().get(category), enchantment);
     }
 
     public static boolean categoryAcceptsNewEnchantmentsWithValue(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
-        if (!category.isBound() || category.value().allowed().isEmpty())
+        if (category == null || !category.isBound() || category.value().allowed().isEmpty())
             return true;
-        List<Holder<Enchantment>> enchantments = categories.getCategories().get(category);
-        if (enchantments == null || enchantments.isEmpty())
-            // The category list may be immutable if empty, so we need to make sure we can add to it.
-            enchantments = new ArrayList<>();
-        if (enchantments.contains(enchantment))
+        List<Holder<Enchantment>> enchantments = new ArrayList<>(categories.getCategories().get(category));
+        if (!enchantments.contains(enchantment))
             enchantments.add(enchantment);
         return categoryAcceptsNewEnchantmentsInternal(category, enchantments, enchantment);
     }
