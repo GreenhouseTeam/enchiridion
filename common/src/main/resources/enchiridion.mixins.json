@@ -6,11 +6,15 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BlockMixin",
+    "BowItemMixin",
     "CreativeModeTabsAccessor",
+    "CrossbowItemMixin",
     "EnchantmentHelperMixin",
     "EntityMixin",
     "ItemEnchantmentsAccessor",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ProjectileWeaponItemMixin",
+    "RegistryDataLoaderMixin"
   ],
   "client": [
     "client.ItemRendererMixin",

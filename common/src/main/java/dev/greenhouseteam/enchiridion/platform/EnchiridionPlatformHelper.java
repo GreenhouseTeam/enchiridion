@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.platform;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.packs.resources.Resource;
 
 public interface EnchiridionPlatformHelper {
 
@@ -16,4 +17,6 @@ public interface EnchiridionPlatformHelper {
     }
 
     RegistryAccess getReqistryAccess();
+
+    boolean isLoaderResourcePack(Resource resource);
 }
