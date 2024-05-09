@@ -22,10 +22,14 @@
         "main": [
             "dev.greenhouseteam.enchiridion.EnchiridionFabric"
         ],
+        "client": [
+            "dev.greenhouseteam.enchiridion.client.EnchiridionFabricClient"
+        ],
         "fabric-datagen": [
             "dev.greenhouseteam.enchiridion.datagen.EnchiridionDatagen"
         ]
     },
+    "accessWidener": "enchiridion.accesswidener",
     "mixins": [
         "${mod_id}.mixins.json",
         "${mod_id}.fabric.mixins.json"

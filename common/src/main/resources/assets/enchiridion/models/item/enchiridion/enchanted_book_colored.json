@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "enchiridion:item/enchanted_book_misc",
+    "layer1": "enchiridion:item/enchanted_book_bookmark"
+  }
+}

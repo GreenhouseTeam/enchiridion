@@ -1,0 +1,11 @@
+{
+  "accepted_enchantments": "#enchiridion:category/primary",
+  "allowed": 1,
+  "color": "gold",
+  "enchanted_book_model": "enchiridion:enchanted_book_primary",
+  "icon": "enchiridion:enchiridion/category/primary",
+  "name": {
+    "translate": "enchiridion.category.enchiridion.primary"
+  },
+  "priority": 150
+}

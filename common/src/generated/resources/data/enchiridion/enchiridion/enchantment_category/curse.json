@@ -1,0 +1,8 @@
+{
+  "accepted_enchantments": "#minecraft:curse",
+  "color": "red",
+  "enchanted_book_model": "enchiridion:enchanted_book_curse",
+  "name": {
+    "translate": "enchiridion.category.enchiridion.curse"
+  }
+}

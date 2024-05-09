@@ -1,4 +1,12 @@
 {
   "enchantment.enchiridion.ashes_curse": "Curse of Ashes",
-  "enchantment.enchiridion.reach": "Reach"
+  "enchantment.enchiridion.reach": "Reach",
+
+  "enchiridion.category.enchiridion.primary": "Primary",
+  "enchiridion.category.enchiridion.secondary": "Secondary",
+  "enchiridion.category.enchiridion.tertiary": "Tertiary",
+  "enchiridion.category.enchiridion.curse": "Curse",
+
+  "resourcePack.enchiridion.default_enchanted_books.name": "Default Enchanted Books",
+  "resourcePack.enchiridion.default_enchanted_books.description": "Reverts the modified Enchanted Book textures to the vanilla texture."
 }

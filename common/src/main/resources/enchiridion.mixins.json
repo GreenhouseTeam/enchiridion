@@ -6,8 +6,15 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BlockMixin",
+    "CreativeModeTabsAccessor",
+    "EnchantmentHelperMixin",
     "EntityMixin",
+    "ItemEnchantmentsAccessor",
     "LivingEntityMixin"
+  ],
+  "client": [
+    "client.ItemRendererMixin",
+    "client.ModelManagerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

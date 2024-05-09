@@ -1,0 +1,11 @@
+{
+  "accepted_enchantments": "#enchiridion:category/tertiary",
+  "allowed": 1,
+  "color": "dark_green",
+  "enchanted_book_model": "enchiridion:enchanted_book_tertiary",
+  "icon": "enchiridion:enchiridion/category/tertiary",
+  "name": {
+    "translate": "enchiridion.category.enchiridion.tertiary"
+  },
+  "priority": 50
+}

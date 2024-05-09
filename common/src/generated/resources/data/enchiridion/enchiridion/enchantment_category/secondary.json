@@ -1,0 +1,11 @@
+{
+  "accepted_enchantments": "#enchiridion:category/secondary",
+  "allowed": 1,
+  "color": "blue",
+  "enchanted_book_model": "enchiridion:enchanted_book_secondary",
+  "icon": "enchiridion:enchiridion/category/secondary",
+  "name": {
+    "translate": "enchiridion.category.enchiridion.secondary"
+  },
+  "priority": 100
+}
