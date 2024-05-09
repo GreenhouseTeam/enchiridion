@@ -7,6 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -37,13 +38,12 @@ public class CreativeTabUtil {
 
 
             List<Integer> intList = indexList.stream().map(Pair::getFirst).toList();
-            List<ItemStack> unmodifiableStackList = indexList.stream().map(Pair::getSecond).toList();
+            List<Item> itemList = indexList.stream().map(pair -> pair.getSecond().getItem()).toList();
             List<ItemStack> stackList = new ArrayList<>(indexList.stream().map(Pair::getSecond).toList());
 
             stackList.sort((o1, o2) -> {
                 if (o1.getItem() != o2.getItem())
-                    // TODO: Handle this better.
-                    return Integer.compare(unmodifiableStackList.indexOf(o1), unmodifiableStackList.indexOf(o2));
+                    return Integer.compare(itemList.indexOf(o1.getItem()), itemList.indexOf(o2.getItem()));
 
                 ItemEnchantments enchantments = o1.getEnchantments();
                 if (enchantments.isEmpty())
