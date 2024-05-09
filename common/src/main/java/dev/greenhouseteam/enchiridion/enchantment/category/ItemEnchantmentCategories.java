@@ -48,6 +48,29 @@ public class ItemEnchantmentCategories {
     }
 
     public void removeCategoryWithEnchantment(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment) {
-        enchantmentCategories.computeIfAbsent(category, category1 -> new ArrayList<>()).add(enchantment);
+        if (!enchantmentCategories.containsKey(category))
+            return;
+
+        enchantmentCategories.computeIfAbsent(category, category1 -> new ArrayList<>()).remove(enchantment);
+
+        if (enchantmentCategories.get(category).isEmpty())
+            enchantmentCategories.remove(category);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ItemEnchantmentCategories categories))
+            return false;
+        return categories.getCategories().equals(getCategories());
+    }
+
+    @Override
+    public int hashCode() {
+        return getCategories().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "ItemEnchantmentCategories{" + this.enchantmentCategories + "}";
     }
 }

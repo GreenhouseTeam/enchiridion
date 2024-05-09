@@ -20,7 +20,6 @@ import java.util.function.Consumer;
 public class EnchantmentHelperMixin {
     @ModifyVariable(method = "updateEnchantments", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/ItemEnchantments$Mutable;toImmutable()Lnet/minecraft/world/item/enchantment/ItemEnchantments;"))
     private static ItemEnchantments.Mutable enchiridion$updateCategories(ItemEnchantments.Mutable mutable, ItemStack stack, Consumer<ItemEnchantments.Mutable> consumer) {
-        DataComponentPatch.Builder builder = DataComponentPatch.builder();
         ItemEnchantmentCategories categories = stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, new ItemEnchantmentCategories());
 
         mutable.keySet().forEach(holder -> {
@@ -31,8 +30,8 @@ public class EnchantmentHelperMixin {
         });
 
         mutable.removeIf(enchantmentHolder -> !EnchiridionUtil.isValidInCategory(Enchiridion.getHelper().getReqistryAccess(), categories, enchantmentHolder));
-        builder.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories);
-        stack.applyComponents(builder.build());
+        if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY)))
+            stack.applyComponents(DataComponentPatch.builder().set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories).build());
 
         return mutable;
     }
