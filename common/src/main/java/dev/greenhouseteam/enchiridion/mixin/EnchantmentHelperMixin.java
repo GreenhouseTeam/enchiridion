@@ -27,6 +27,8 @@ public class EnchantmentHelperMixin {
             if (category == null || !category.isBound() || categories.getCategories().containsKey(holder) && categories.getCategories().get(category).contains(holder))
                 return;
             categories.addCategoryWithEnchantment(category, holder);
+            if (!EnchiridionUtil.isValidInCategory(Enchiridion.getHelper().getReqistryAccess(), categories, holder))
+                categories.removeCategoryWithEnchantment(category, holder);
         });
 
         mutable.removeIf(enchantmentHolder -> !EnchiridionUtil.isValidInCategory(Enchiridion.getHelper().getReqistryAccess(), categories, enchantmentHolder));

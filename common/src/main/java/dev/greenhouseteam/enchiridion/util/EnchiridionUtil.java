@@ -58,20 +58,18 @@ public class EnchiridionUtil {
     }
 
     public static boolean isValidInCategory(HolderLookup.Provider registries, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
-        Optional<Holder.Reference<EnchantmentCategory>> category = registries.lookupOrThrow(EnchiridionRegistries.ENCHANTMENT_CATEGORY).listElements().filter(c -> c.isBound() && c.value().acceptedEnchantments().contains(enchantment)).max((o1, o2) -> {
-            if (!categoryAcceptsNewEnchantments(o1, categories, enchantment))
-                return -1;
-            if (!categoryAcceptsNewEnchantments(o2, categories, enchantment))
-                return 1;
-            return Integer.compare(o1.value().priority(), o2.value().priority());
-        });
-        return category.map(enchantmentCategory -> categoryAcceptsNewEnchantments(enchantmentCategory, categories, enchantment)).orElse(true);
+        Optional<Holder.Reference<EnchantmentCategory>> category = registries.lookupOrThrow(EnchiridionRegistries.ENCHANTMENT_CATEGORY).listElements().filter(c -> c.isBound() && c.value().acceptedEnchantments().contains(enchantment)).max(Comparator.comparingInt(o -> o.value().priority()));
+        return category.map(enchantmentCategory -> isValidInCategoryInternal(enchantmentCategory, List.copyOf(categories.getCategories().get(enchantmentCategory)), enchantment)).orElse(true);
     }
 
-    public static boolean categoryAcceptsNewEnchantments(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
+    private static boolean isValidInCategoryInternal(Holder<EnchantmentCategory> category, List<Holder<Enchantment>> holders, Holder<Enchantment> holder) {
+        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.subList(0, holders.indexOf(holder)).size() < category.value().allowed().get() + 1;
+    }
+
+    public static boolean categoryAcceptsNewEnchantments(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories) {
         if (category == null || !category.isBound() || category.value().allowed().isEmpty())
             return true;
-        return categoryAcceptsNewEnchantmentsInternal(category, categories.getCategories().get(category), enchantment);
+        return categoryAcceptsNewEnchantmentsInternal(category, List.copyOf(categories.getCategories().get(category)));
     }
 
     public static boolean categoryAcceptsNewEnchantmentsWithValue(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
@@ -80,11 +78,11 @@ public class EnchiridionUtil {
         List<Holder<Enchantment>> enchantments = new ArrayList<>(categories.getCategories().get(category));
         if (!enchantments.contains(enchantment))
             enchantments.add(enchantment);
-        return categoryAcceptsNewEnchantmentsInternal(category, enchantments, enchantment);
+        return categoryAcceptsNewEnchantmentsInternal(category, enchantments);
     }
 
-    private static boolean categoryAcceptsNewEnchantmentsInternal(Holder<EnchantmentCategory> category, List<Holder<Enchantment>> holders, Holder<Enchantment> enchantment) {
-        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.subList(0, holders.indexOf(enchantment) + 1).size() < category.value().allowed().get() + 1;
+    private static boolean categoryAcceptsNewEnchantmentsInternal(Holder<EnchantmentCategory> category, List<Holder<Enchantment>> holders) {
+        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.size() < category.value().allowed().get() + 1;
     }
 
     public static void modifyEnchantmentTooltips(ItemStack stack, Item.TooltipContext tooltipContext, TooltipFlag flag, List<Component> components) {
