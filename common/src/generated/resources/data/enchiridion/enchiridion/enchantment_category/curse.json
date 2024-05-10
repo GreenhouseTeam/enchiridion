@@ -4,5 +4,6 @@
   "enchanted_book_model": "enchiridion:enchanted_book_curse",
   "name": {
     "translate": "enchiridion.category.enchiridion.curse"
-  }
+  },
+  "priority": -10
 }

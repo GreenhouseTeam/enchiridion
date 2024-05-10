@@ -29,7 +29,7 @@ public record EnchantmentCategory(HolderSet<Enchantment> acceptedEnchantments, C
             ResourceLocation.CODEC.optionalFieldOf("enchanted_book_model").forGetter(EnchantmentCategory::enchantedBookModelLocation),
             TextColor.CODEC.fieldOf("color").forGetter(EnchantmentCategory::color),
             Codec.INT.optionalFieldOf("allowed").forGetter(EnchantmentCategory::allowed),
-            Codec.INT.optionalFieldOf("priority", Integer.MIN_VALUE).forGetter(EnchantmentCategory::priority)
+            Codec.INT.optionalFieldOf("priority", 0).forGetter(EnchantmentCategory::priority)
     ).apply(inst, EnchantmentCategory::new));
 
 
