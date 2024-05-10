@@ -62,17 +62,17 @@ public class EnchiridionUtil {
         enchantments = new ArrayList<>(enchantments);
         if (!enchantments.contains(enchantment))
             enchantments.add(enchantment);
-        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && enchantments.subList(0, enchantments.indexOf(enchantment)).size() < category.value().allowed().get();
+        return (category.isBound() && category.value().limit().isEmpty()) || category.isBound() && enchantments.subList(0, enchantments.indexOf(enchantment)).size() < category.value().limit().get();
     }
 
     public static boolean categoryAcceptsNewEnchantments(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories) {
-        if (category == null || !category.isBound() || category.value().allowed().isEmpty() || !categories.getCategories().containsKey(category))
+        if (category == null || !category.isBound() || category.value().limit().isEmpty() || !categories.getCategories().containsKey(category))
             return true;
         return categoryAcceptsNewEnchantmentsInternal(category, List.copyOf(categories.getCategories().get(category)));
     }
 
     public static boolean categoryAcceptsNewEnchantmentsWithValue(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
-        if (category == null || !category.isBound() || category.value().allowed().isEmpty() || !categories.getCategories().containsKey(category))
+        if (category == null || !category.isBound() || category.value().limit().isEmpty() || !categories.getCategories().containsKey(category))
             return true;
         List<Holder<Enchantment>> enchantments = new ArrayList<>(categories.getCategories().get(category));
         if (!enchantments.contains(enchantment))
@@ -81,7 +81,7 @@ public class EnchiridionUtil {
     }
 
     private static boolean categoryAcceptsNewEnchantmentsInternal(Holder<EnchantmentCategory> category, List<Holder<Enchantment>> holders) {
-        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.size() < category.value().allowed().get();
+        return (category.isBound() && category.value().limit().isEmpty()) || category.isBound() && holders.size() < category.value().limit().get();
     }
 
     public static ItemEnchantments getEnchantmentsOrStoredEnchantments(ItemStack stack) {
