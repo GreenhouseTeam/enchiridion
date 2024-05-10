@@ -3,18 +3,14 @@ package dev.greenhouseteam.enchiridion.util;
 import com.mojang.datafixers.util.Pair;
 import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
 import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.tags.EnchantmentTags;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.Nullable;
@@ -63,17 +59,17 @@ public class EnchiridionUtil {
     }
 
     private static boolean isValidInCategoryInternal(Holder<EnchantmentCategory> category, List<Holder<Enchantment>> holders, Holder<Enchantment> holder) {
-        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.subList(0, holders.indexOf(holder)).size() < category.value().allowed().get() + 1;
+        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.subList(0, holders.indexOf(holder)).size() < category.value().allowed().get();
     }
 
     public static boolean categoryAcceptsNewEnchantments(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories) {
-        if (category == null || !category.isBound() || category.value().allowed().isEmpty())
+        if (category == null || !category.isBound() || category.value().allowed().isEmpty() || !categories.getCategories().containsKey(category))
             return true;
         return categoryAcceptsNewEnchantmentsInternal(category, List.copyOf(categories.getCategories().get(category)));
     }
 
     public static boolean categoryAcceptsNewEnchantmentsWithValue(Holder<EnchantmentCategory> category, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {
-        if (category == null || !category.isBound() || category.value().allowed().isEmpty())
+        if (category == null || !category.isBound() || category.value().allowed().isEmpty() || !categories.getCategories().containsKey(category))
             return true;
         List<Holder<Enchantment>> enchantments = new ArrayList<>(categories.getCategories().get(category));
         if (!enchantments.contains(enchantment))
@@ -82,7 +78,7 @@ public class EnchiridionUtil {
     }
 
     private static boolean categoryAcceptsNewEnchantmentsInternal(Holder<EnchantmentCategory> category, List<Holder<Enchantment>> holders) {
-        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.size() < category.value().allowed().get() + 1;
+        return (category.isBound() && category.value().allowed().isEmpty()) || category.isBound() && holders.size() < category.value().allowed().get();
     }
 
     public static ItemEnchantments getEnchantmentsOrStoredEnchantments(ItemStack stack) {

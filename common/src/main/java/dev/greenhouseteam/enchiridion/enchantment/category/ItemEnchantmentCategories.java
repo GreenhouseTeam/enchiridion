@@ -57,6 +57,14 @@ public class ItemEnchantmentCategories {
             enchantmentCategories.remove(category);
     }
 
+    public boolean contains(Holder<Enchantment> enchantment) {
+        return enchantmentCategories.values().stream().anyMatch(holders -> holders.contains(enchantment));
+    }
+
+    public void clear() {
+        enchantmentCategories.clear();
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof ItemEnchantmentCategories categories))
