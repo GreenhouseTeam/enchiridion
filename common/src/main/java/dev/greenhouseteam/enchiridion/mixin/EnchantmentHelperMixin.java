@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @Mixin(EnchantmentHelper.class)
@@ -35,9 +34,13 @@ public class EnchantmentHelperMixin {
             categories.addCategoryWithEnchantment(category, enchantment);
         });
 
-        mutable.removeIf(enchantment -> !categories.contains(enchantment));
-        if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY)))
-            stack.applyComponents(DataComponentPatch.builder().set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories).build());
+        mutable.removeIf(enchantment -> EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment) != null && !categories.contains(enchantment));
+        if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY))) {
+            if (categories.isEmpty())
+                stack.remove(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES);
+            else
+                stack.applyComponents(DataComponentPatch.builder().set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories).build());
+        }
 
         return mutable;
     }

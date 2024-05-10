@@ -67,8 +67,8 @@ public class ItemEnchantmentCategories {
         return enchantmentCategories.values().stream().anyMatch(holders -> holders.contains(enchantment));
     }
 
-    public void clear() {
-        enchantmentCategories.clear();
+    public boolean isEmpty() {
+        return enchantmentCategories.isEmpty();
     }
 
     @Override
