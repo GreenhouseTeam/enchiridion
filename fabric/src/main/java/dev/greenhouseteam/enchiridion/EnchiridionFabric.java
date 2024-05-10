@@ -39,10 +39,20 @@ public class EnchiridionFabric implements ModInitializer {
     public void onInitialize() {
         Enchiridion.init(new EnchiridionPlatformHelperFabric());
 
-        DynamicRegistries.registerSynced(EnchiridionRegistries.ENCHANTMENT_CATEGORY, EnchantmentCategory.DIRECT_CODEC);
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> {
+            Set<TagKey<Item>> itemTags = Set.of(Enchiridion.ItemTags.ASHES_ENCHANTABLE, Enchiridion.ItemTags.AXE_ENCHANTABLE);
+            CreativeModeTabsAccessor.enchiridion$invokeGenerateEnchantmentBookTypesOnlyMaxLevel(entries, entries.getContext().holders().lookupOrThrow(Registries.ENCHANTMENT), itemTags, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+            CreativeModeTabsAccessor.enchiridion$invokeGenerateEnchantmentBookTypesAllLevels(entries, entries.getContext().holders().lookupOrThrow(Registries.ENCHANTMENT), itemTags, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+        });
+
+        ItemGroupEvents.MODIFY_ENTRIES_ALL.register((group, entries) -> {
+            CreativeTabUtil.sortEnchantmentsBasedOnCategory(entries.getDisplayStacks(), entries.getContext().holders());
+            CreativeTabUtil.sortEnchantmentsBasedOnCategory(entries.getSearchTabStacks(), entries.getContext().holders());
+        });
 
         EnchiridionDataComponents.registerAll(Registry::register);
         EnchiridionEnchantmentEffectComponents.registerAll(Registry::register);
+        DynamicRegistries.registerSynced(EnchiridionRegistries.ENCHANTMENT_CATEGORY, EnchantmentCategory.DIRECT_CODEC);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server1 -> server = server1);
 
@@ -54,17 +64,6 @@ public class EnchiridionFabric implements ModInitializer {
                 return TriState.FALSE;
 
             return TriState.DEFAULT;
-        });
-
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> {
-            Set<TagKey<Item>> itemTags = Set.of(Enchiridion.ItemTags.ASHES_ENCHANTABLE, Enchiridion.ItemTags.AXE_ENCHANTABLE);
-            CreativeModeTabsAccessor.enchiridion$invokeGenerateEnchantmentBookTypesOnlyMaxLevel(entries, entries.getContext().holders().lookupOrThrow(Registries.ENCHANTMENT), itemTags, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
-            CreativeModeTabsAccessor.enchiridion$invokeGenerateEnchantmentBookTypesAllLevels(entries, entries.getContext().holders().lookupOrThrow(Registries.ENCHANTMENT), itemTags, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        });
-
-        ItemGroupEvents.MODIFY_ENTRIES_ALL.register((group, entries) -> {
-            CreativeTabUtil.sortEnchantmentsBasedOnCategory(entries.getDisplayStacks(), entries.getContext().holders());
-            CreativeTabUtil.sortEnchantmentsBasedOnCategory(entries.getSearchTabStacks(), entries.getContext().holders());
         });
 
         FabricLoader.getInstance().getModContainer(Enchiridion.MOD_ID).ifPresent(modContainer -> ResourceManagerHelper.registerBuiltinResourcePack(Enchiridion.asResource("default_enchanted_books"), modContainer, Component.translatable("resourcePack.enchiridion.default_enchanted_books.name"), ResourcePackActivationType.NORMAL));

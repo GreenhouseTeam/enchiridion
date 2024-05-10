@@ -26,7 +26,6 @@ public class CreativeTabUtil {
             for (Pair<Integer, ItemStack> stack : indexList)
                 stacks.set(stack.getFirst(), ItemStack.EMPTY);
 
-
             List<Integer> intList = indexList.stream().map(Pair::getFirst).toList();
             List<Item> itemList = indexList.stream().map(pair -> pair.getSecond().getItem()).toList();
             List<ItemStack> stackList = new ArrayList<>(indexList.stream().map(Pair::getSecond).toList());

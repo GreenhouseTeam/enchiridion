@@ -7,9 +7,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -21,6 +24,7 @@ public record EnchantmentCategory(HolderSet<Enchantment> acceptedEnchantments, C
                                   Optional<ResourceLocation> enchantedBookModelLocation, Optional<ResourceLocation> fullEnchantedBookModelLocation,
                                   TextColor color, Optional<Integer> limit, int priority) {
     public static final Codec<Holder<EnchantmentCategory>> CODEC = RegistryFixedCodec.create(EnchiridionRegistries.ENCHANTMENT_CATEGORY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<EnchantmentCategory>> STREAM_CODEC = ByteBufCodecs.holderRegistry(EnchiridionRegistries.ENCHANTMENT_CATEGORY);
     public static final Codec<EnchantmentCategory> DIRECT_CODEC = RecordCodecBuilder.create(inst -> inst.group(
             RegistryCodecs.homogeneousList(Registries.ENCHANTMENT, Enchantment.DIRECT_CODEC).fieldOf("accepted_enchantments").forGetter(EnchantmentCategory::acceptedEnchantments),
             ComponentSerialization.CODEC.fieldOf("name").forGetter(EnchantmentCategory::name),

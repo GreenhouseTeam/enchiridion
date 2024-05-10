@@ -14,27 +14,26 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class ItemEnchantmentCategories {
     public static final ItemEnchantmentCategories EMPTY = new ItemEnchantmentCategories(new Object2ObjectOpenHashMap<>());
-    public static final Codec<ItemEnchantmentCategories> CODEC = new UnboundedMapCodec<>(EnchantmentCategory.CODEC, Enchantment.CODEC.listOf().xmap(LinkedHashSet::new, ObjectArrayList::new)).xmap(Object2ObjectOpenHashMap::new, Function.identity()).xmap(ItemEnchantmentCategories::new, categories -> categories.enchantmentCategories);
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemEnchantmentCategories> STREAM_CODEC = ByteBufCodecs.map(Object2ObjectOpenHashMap::new, ByteBufCodecs.holderRegistry(EnchiridionRegistries.ENCHANTMENT_CATEGORY), ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT).apply(ByteBufCodecs.list()).map(LinkedHashSet::new, ObjectArrayList::new)).map(ItemEnchantmentCategories::new, categories -> new Object2ObjectOpenHashMap<>(categories.enchantmentCategories));
+    public static final Codec<ItemEnchantmentCategories> CODEC = new UnboundedMapCodec<>(EnchantmentCategory.CODEC, Enchantment.CODEC.listOf().xmap(ObjectArrayList::new, Function.identity())).xmap(Object2ObjectOpenHashMap::new, Function.identity()).xmap(ItemEnchantmentCategories::new, categories -> categories.enchantmentCategories);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemEnchantmentCategories> STREAM_CODEC = ByteBufCodecs.map(Object2ObjectOpenHashMap::new, EnchantmentCategory.STREAM_CODEC, ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT).apply(ByteBufCodecs.list()).map(ObjectArrayList::new, Function.identity())).map(ItemEnchantmentCategories::new, categories -> new Object2ObjectOpenHashMap<>(categories.enchantmentCategories));
 
-    private final Object2ObjectOpenHashMap<Holder<EnchantmentCategory>, LinkedHashSet<Holder<Enchantment>>> enchantmentCategories;
+    private final Object2ObjectOpenHashMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> enchantmentCategories;
 
     public ItemEnchantmentCategories() {
         this.enchantmentCategories = new Object2ObjectOpenHashMap<>();
     }
 
-    public ItemEnchantmentCategories(Object2ObjectOpenHashMap<Holder<EnchantmentCategory>, LinkedHashSet<Holder<Enchantment>>> enchantmentCategories) {
+    public ItemEnchantmentCategories(Object2ObjectOpenHashMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> enchantmentCategories) {
         this.enchantmentCategories = enchantmentCategories;
     }
 
-    public Map<Holder<EnchantmentCategory>, LinkedHashSet<Holder<Enchantment>>> getCategories() {
+    public Map<Holder<EnchantmentCategory>, List<Holder<Enchantment>>> getCategories() {
         return Map.copyOf(enchantmentCategories);
     }
 
@@ -44,14 +43,16 @@ public class ItemEnchantmentCategories {
     }
 
     public void addCategoryWithEnchantment(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment) {
-        enchantmentCategories.computeIfAbsent(category, category1 -> new LinkedHashSet<>()).add(enchantment);
+        List<Holder<Enchantment>> categoryList = enchantmentCategories.computeIfAbsent(category, category1 -> new ObjectArrayList<>());
+        if (!categoryList.contains(enchantment))
+            categoryList.add(enchantment);
     }
 
     public void removeCategoryWithEnchantment(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment) {
         if (!enchantmentCategories.containsKey(category))
             return;
 
-        enchantmentCategories.computeIfAbsent(category, category1 -> new LinkedHashSet<>()).remove(enchantment);
+        enchantmentCategories.computeIfAbsent(category, category1 -> new ObjectArrayList<>()).remove(enchantment);
 
         if (enchantmentCategories.get(category).isEmpty())
             enchantmentCategories.remove(category);
