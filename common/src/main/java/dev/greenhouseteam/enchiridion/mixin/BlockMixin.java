@@ -1,5 +1,9 @@
 package dev.greenhouseteam.enchiridion.mixin;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.sun.jna.platform.unix.aix.Perfstat;
+import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParamSets;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParams;
@@ -11,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
@@ -79,5 +84,10 @@ public class BlockMixin {
                 }
             }
         }
+    }
+
+    @WrapWithCondition(method = "playerDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
+    private boolean enchiridion$wrapExhaustionFromMining(Player player, float value, @Local(argsOnly = true) BlockPos pos,  @Local(argsOnly = true) ItemStack stack) {
+        return !PreventHungerConsumptionEffect.shouldPreventMiningConsumption(stack, player, pos);
     }
 }

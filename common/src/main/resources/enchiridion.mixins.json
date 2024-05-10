@@ -13,8 +13,10 @@
     "EntityMixin",
     "ItemEnchantmentsAccessor",
     "LivingEntityMixin",
+    "PlayerMixin",
     "ProjectileWeaponItemMixin",
-    "RegistryDataLoaderMixin"
+    "RegistryDataLoaderMixin",
+    "ServerPlayerMixin"
   ],
   "client": [
     "client.ItemRendererMixin",

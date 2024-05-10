@@ -115,6 +115,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SOUL_SPEED,
                             Enchantments.SWEEPING_EDGE,
                             Enchantments.SWIFT_SNEAK,
+                            EnchiridionEnchantments.EXHILARATING,
                             EnchiridionEnchantments.REACH
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.TERTIARY_CATEGORY)

@@ -1,0 +1,29 @@
+{
+  "anvil_cost": 1,
+  "description": {
+    "translate": "enchantment.enchiridion.exhilarating"
+  },
+  "effects": {
+    "enchiridion:prevent_hunger_consumption": [
+      {
+        "effect": {
+          "mining": true
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 35,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 4
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/mining",
+  "weight": 1
+}
