@@ -2,7 +2,6 @@ package dev.greenhouseteam.enchiridion.enchantment.category;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.UnboundedMapCodec;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import net.minecraft.core.Holder;
@@ -18,10 +17,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ItemEnchantmentCategories {
     public static final ItemEnchantmentCategories EMPTY = new ItemEnchantmentCategories(ImmutableMap.of());
-    public static final Codec<ItemEnchantmentCategories> CODEC = new UnboundedMapCodec<>(EnchantmentCategory.CODEC, Enchantment.CODEC.listOf()).xmap(ItemEnchantmentCategories::new, ItemEnchantmentCategories::getCategories);
+    public static final Codec<ItemEnchantmentCategories> CODEC = new UnboundedMapCodec<>(EnchantmentCategory.CODEC, Enchantment.CODEC.listOf().xmap(holders -> (List<Holder<Enchantment>>) new ArrayList<>(holders), Function.identity())).xmap(map -> (Map<Holder<EnchantmentCategory>, List<Holder<Enchantment>>>) new HashMap<>(map), Function.identity()).xmap(ItemEnchantmentCategories::new, ItemEnchantmentCategories::getCategories);
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemEnchantmentCategories> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.map(HashMap::new, ByteBufCodecs.holderRegistry(EnchiridionRegistries.ENCHANTMENT_CATEGORY), ByteBufCodecs.<RegistryFriendlyByteBuf, Holder<Enchantment>>list().apply(ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT))), ItemEnchantmentCategories::getCategories, ItemEnchantmentCategories::new);
 
     private final Map<Holder<EnchantmentCategory>, List<Holder<Enchantment>>> enchantmentCategories;
