@@ -35,7 +35,6 @@ public record EnchantmentCategory(HolderSet<Enchantment> acceptedEnchantments, C
             Codec.INT.optionalFieldOf("priority", 0).forGetter(EnchantmentCategory::priority)
     ).apply(inst, EnchantmentCategory::new));
 
-
     // TODO: Builder class or methods for this?
     public EnchantmentCategory(HolderSet<Enchantment> acceptedEnchantments, Component name,
                                ResourceLocation iconLocation, ResourceLocation enchantedBookModelLocation,

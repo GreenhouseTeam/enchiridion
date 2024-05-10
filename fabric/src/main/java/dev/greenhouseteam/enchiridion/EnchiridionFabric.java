@@ -70,7 +70,7 @@ public class EnchiridionFabric implements ModInitializer {
     }
 
     public static RegistryAccess getRegistryAccess() {
-        if (server == null)
+        if (server == null || !server.isDedicatedServer())
             return ClientRegistryAccessReference.get();
         return server.registryAccess();
     }

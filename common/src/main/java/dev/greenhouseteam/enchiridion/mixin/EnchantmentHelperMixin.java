@@ -44,8 +44,11 @@ public class EnchantmentHelperMixin {
         if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY))) {
             if (categories.isEmpty())
                 stack.remove(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES);
-            else
-                stack.applyComponents(DataComponentPatch.builder().set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories).build());
+            else {
+                DataComponentPatch.Builder builder = DataComponentPatch.builder();
+                builder.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories);
+                stack.applyComponents(builder.build());
+            }
         }
 
         return enchantments;

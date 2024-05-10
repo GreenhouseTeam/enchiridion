@@ -5,6 +5,6 @@ import net.minecraft.core.RegistryAccess;
 
 public class ClientRegistryAccessReference {
     public static RegistryAccess get() {
-        return Minecraft.getInstance().getConnection().registryAccess();
+        return Minecraft.getInstance().level.registryAccess();
     }
 }
