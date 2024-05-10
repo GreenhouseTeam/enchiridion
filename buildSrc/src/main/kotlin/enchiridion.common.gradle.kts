@@ -1,6 +1,5 @@
 import dev.greenhouseteam.enchiridion.gradle.Properties
 import dev.greenhouseteam.enchiridion.gradle.Versions
-import java.util.function.Predicate
 
 plugins {
     base
@@ -105,7 +104,7 @@ tasks {
         filesMatching(setOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json")) {
             expand(expandProps)
         }
-        exclude(".cache")
+        exclude("\\.cache")
     }
 }
 

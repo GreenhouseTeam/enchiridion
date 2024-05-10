@@ -1,5 +1,4 @@
 import dev.greenhouseteam.enchiridion.gradle.Properties
-import dev.greenhouseteam.enchiridion.gradle.Versions
 
 plugins {
     id("enchiridion.common")
