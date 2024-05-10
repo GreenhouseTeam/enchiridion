@@ -30,6 +30,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 
 public class EnchiridionFabric implements ModInitializer {
@@ -48,7 +50,7 @@ public class EnchiridionFabric implements ModInitializer {
 
         EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
             ItemEnchantmentCategories categories = target.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY);
-            Holder<EnchantmentCategory> category = categories.findFirstCategory(enchantment);
+            Holder<EnchantmentCategory> category = EnchiridionUtil.getFirstEnchantmentCategory(getRegistryAccess(), enchantment);
 
             if (category != null && !EnchiridionUtil.categoryAcceptsNewEnchantmentsWithValue(category, categories, enchantment))
                 return TriState.FALSE;

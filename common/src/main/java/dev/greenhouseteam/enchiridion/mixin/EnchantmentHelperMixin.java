@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Mixin(EnchantmentHelper.class)
@@ -24,7 +25,7 @@ public class EnchantmentHelperMixin {
 
         mutable.keySet().forEach(enchantment -> {
             Holder<EnchantmentCategory> category = EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment);
-            if (category != null && category.isBound() && !EnchiridionUtil.categoryAcceptsNewEnchantments(category, categories)) {
+            if (category != null && category.isBound() && !EnchiridionUtil.isValidInCategory(category, categories.get(category), enchantment)) {
                 categories.removeCategoryWithEnchantment(category, enchantment);
                 return;
             }

@@ -57,6 +57,12 @@ public class ItemEnchantmentCategories {
             enchantmentCategories.remove(category);
     }
 
+    public List<Holder<Enchantment>> get(Holder<EnchantmentCategory> category) {
+        if (!enchantmentCategories.containsKey(category))
+            return List.of();
+        return List.copyOf(enchantmentCategories.get(category));
+    }
+
     public boolean contains(Holder<Enchantment> enchantment) {
         return enchantmentCategories.values().stream().anyMatch(holders -> holders.contains(enchantment));
     }
