@@ -6,7 +6,7 @@ object Versions {
     const val MINECRAFT = "24w18a"
     const val INTERNAL_MINECRAFT = "24w18a"
 
-    const val FABRIC_API = "0.97.9+1.21"
+    const val FABRIC_API = "0.98.0+1.21"
     const val FABRIC_LOADER = "0.15.11"
     const val MOD_MENU = "10.0.0-beta.1"
     const val FABRIC_LOADER_RANGE = ">=0.15"
