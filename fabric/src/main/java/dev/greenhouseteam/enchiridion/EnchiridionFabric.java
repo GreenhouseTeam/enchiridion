@@ -30,8 +30,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
-import java.util.Comparator;
-import java.util.Optional;
 import java.util.Set;
 
 public class EnchiridionFabric implements ModInitializer {

@@ -19,8 +19,7 @@ import java.util.Optional;
 public record EnchantmentCategory(HolderSet<Enchantment> acceptedEnchantments, Component name,
                                   Optional<ResourceLocation> iconLocation, Optional<ResourceLocation> fullIconLocation,
                                   Optional<ResourceLocation> enchantedBookModelLocation, Optional<ResourceLocation> fullEnchantedBookModelLocation,
-                                  TextColor color, Optional<Integer> allowed,
-                                  int priority) {
+                                  TextColor color, Optional<Integer> allowed, int priority) {
     public static final Codec<Holder<EnchantmentCategory>> CODEC = RegistryFixedCodec.create(EnchiridionRegistries.ENCHANTMENT_CATEGORY);
     public static final Codec<EnchantmentCategory> DIRECT_CODEC = RecordCodecBuilder.create(inst -> inst.group(
             RegistryCodecs.homogeneousList(Registries.ENCHANTMENT, Enchantment.DIRECT_CODEC).fieldOf("accepted_enchantments").forGetter(EnchantmentCategory::acceptedEnchantments),
