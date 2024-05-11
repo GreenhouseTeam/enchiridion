@@ -1,0 +1,63 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.enchiridion.ice_crush"
+  },
+  "effects": {
+    "enchiridion:post_shield_disable": [
+      {
+        "affected": "victim",
+        "effect": {
+          "type": "enchiridion:freeze",
+          "duration": {
+            "type": "minecraft:linear",
+            "base": 460.0,
+            "per_level_above_first": 160.0
+          }
+        },
+        "enchanted": "attacker",
+        "requirements": {
+          "condition": "minecraft:damage_source_properties",
+          "predicate": {
+            "is_direct": true
+          }
+        }
+      }
+    ],
+    "minecraft:post_attack": [
+      {
+        "affected": "victim",
+        "effect": {
+          "type": "enchiridion:freeze",
+          "duration": {
+            "type": "minecraft:linear",
+            "base": 300.0,
+            "per_level_above_first": 160.0
+          }
+        },
+        "enchanted": "attacker",
+        "requirements": {
+          "condition": "minecraft:damage_source_properties",
+          "predicate": {
+            "is_direct": true
+          }
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 60,
+    "per_level_above_first": 20
+  },
+  "max_level": 2,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 20
+  },
+  "primary_items": "#enchiridion:enchantable/ice_crush_primary",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#enchiridion:enchantable/ice_crush",
+  "weight": 2
+}

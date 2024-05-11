@@ -4,6 +4,7 @@ import com.mojang.serialization.Lifecycle;
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentCategories;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantments;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionEntityEnchantmentEffects;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -20,6 +21,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 
@@ -82,6 +84,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(EnchiridionEnchantments.ASHES_CURSE);
 
             getOrCreateTagBuilder(EnchantmentTags.NON_TREASURE)
+                    .add(EnchiridionEnchantments.EXHILARATING)
+                    .add(EnchiridionEnchantments.ICE_CRUSH)
                     .add(EnchiridionEnchantments.REACH);
             getOrCreateTagBuilder(EnchantmentTags.TREASURE)
                     .add(EnchiridionEnchantments.ASHES_CURSE);
@@ -115,6 +119,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SWEEPING_EDGE,
                             Enchantments.SWIFT_SNEAK,
                             EnchiridionEnchantments.EXHILARATING,
+                            EnchiridionEnchantments.ICE_CRUSH,
                             EnchiridionEnchantments.REACH
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.TERTIARY_CATEGORY)
@@ -155,6 +160,10 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(Enchiridion.ItemTags.ASHES_ENCHANTABLE)
                     .forceAddTag(ItemTags.WEAPON_ENCHANTABLE)
                     .forceAddTag(ItemTags.MINING_ENCHANTABLE);
+            getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_CRUSH_ENCHANTABLE)
+                    .forceAddTag(Enchiridion.ItemTags.AXE_ENCHANTABLE)
+                    .add(Items.MACE);
+            getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_CRUSH_PRIMARY_ENCHANTABLE);
         }
     }
 }

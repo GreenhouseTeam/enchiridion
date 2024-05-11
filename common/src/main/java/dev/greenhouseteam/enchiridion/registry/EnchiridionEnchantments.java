@@ -1,9 +1,15 @@
 package dev.greenhouseteam.enchiridion.registry;
 
 import dev.greenhouseteam.enchiridion.Enchiridion;
+import dev.greenhouseteam.enchiridion.enchantment.effects.FreezeEntityEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
+import net.minecraft.advancements.critereon.DamageSourcePredicate;
+import net.minecraft.advancements.critereon.EntityEquipmentPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.MovementPredicate;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -13,16 +19,24 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+import net.minecraft.world.item.enchantment.EnchantmentTarget;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.Ignite;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
+import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
 import java.util.UUID;
 
 public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> EXHILARATING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("exhilarating"));
+    public static final ResourceKey<Enchantment> ICE_CRUSH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_crush"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reach"));
 
     public static final ResourceKey<Enchantment> ASHES_CURSE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ashes_curse"));
@@ -30,6 +44,8 @@ public class EnchiridionEnchantments {
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
         HolderSet<Item> ashesEnchantable = items.getOrThrow(Enchiridion.ItemTags.ASHES_ENCHANTABLE);
+        HolderSet<Item> iceCrushEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_CRUSH_ENCHANTABLE);
+        HolderSet<Item> iceCrushPrimaryEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_CRUSH_PRIMARY_ENCHANTABLE);
         HolderSet<Item> miningEnchantable = items.getOrThrow(ItemTags.MINING_ENCHANTABLE);
 
         Enchantment ashesCurse = Enchantment.enchantment(
@@ -38,6 +54,14 @@ public class EnchiridionEnchantments {
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP, new Ignite(LevelBasedValue.constant(5.0F)))
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_ENTITY_DROP, new Ignite(LevelBasedValue.constant(5.0F)))
                 .build(EnchiridionEnchantments.ASHES_CURSE.location());
+        Enchantment iceCrush = Enchantment.enchantment(
+                Enchantment.definition(
+                        iceCrushEnchantable, iceCrushPrimaryEnchantable, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new FreezeEntityEffect(LevelBasedValue.perLevel(300F, 160F)),
+                        DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
+                .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new FreezeEntityEffect(LevelBasedValue.perLevel(460F, 160F)),
+                        DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
+                .build(EnchiridionEnchantments.ICE_CRUSH.location());
         Enchantment reach = Enchantment.enchantment(
                 Enchantment.definition(
                         miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlotGroup.MAINHAND))
@@ -51,6 +75,7 @@ public class EnchiridionEnchantments {
 
         context.register(EnchiridionEnchantments.ASHES_CURSE, ashesCurse);
         context.register(EnchiridionEnchantments.EXHILARATING, exhilarating);
+        context.register(EnchiridionEnchantments.ICE_CRUSH, iceCrush);
         context.register(EnchiridionEnchantments.REACH, reach);
     }
 }

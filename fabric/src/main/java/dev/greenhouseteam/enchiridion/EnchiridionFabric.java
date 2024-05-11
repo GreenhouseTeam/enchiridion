@@ -6,6 +6,7 @@ import dev.greenhouseteam.enchiridion.mixin.CreativeModeTabsAccessor;
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelperFabric;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionEntityEnchantmentEffects;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import dev.greenhouseteam.enchiridion.util.ClientRegistryAccessReference;
 import dev.greenhouseteam.enchiridion.util.CreativeTabUtil;
@@ -52,6 +53,8 @@ public class EnchiridionFabric implements ModInitializer {
 
         EnchiridionDataComponents.registerAll(Registry::register);
         EnchiridionEnchantmentEffectComponents.registerAll(Registry::register);
+        EnchiridionEntityEnchantmentEffects.registerAll(Registry::register);
+
         DynamicRegistries.registerSynced(EnchiridionRegistries.ENCHANTMENT_CATEGORY, EnchantmentCategory.DIRECT_CODEC);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server1 -> server = server1);

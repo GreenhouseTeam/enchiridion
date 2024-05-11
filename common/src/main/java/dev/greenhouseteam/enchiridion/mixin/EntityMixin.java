@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.access.EntityPostEntityDropParamsAccess;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParamSets;
@@ -29,6 +30,8 @@ import java.util.Optional;
 public abstract class EntityMixin {
     @Shadow public abstract Level level();
 
+    @Shadow public abstract boolean canFreeze();
+
     @ModifyReturnValue(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "RETURN", ordinal = 2))
     private ItemEntity enchiridion$postEntityDropEffectComponents(ItemEntity original) {
         if (!(this.level() instanceof ServerLevel serverLevel) || !((Entity)(Object)this instanceof EntityPostEntityDropParamsAccess access) || access.enchiridion$getPostEntityDropsParams() == null)
@@ -50,5 +53,10 @@ public abstract class EntityMixin {
             }
         }
         return original;
+    }
+
+    @ModifyReturnValue(method = "isFreezing", at = @At("RETURN"))
+    private boolean enchiridion$setFreezingWhenEnchantment(boolean original) {
+        return original || Enchiridion.getHelper().isFrozenByEnchantment((Entity)(Object)this) && canFreeze();
     }
 }
