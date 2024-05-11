@@ -28,6 +28,19 @@
       {
         "affected": "victim",
         "effect": {
+          "type": "enchiridion:extinguish"
+        },
+        "enchanted": "attacker",
+        "requirements": {
+          "condition": "minecraft:damage_source_properties",
+          "predicate": {
+            "is_direct": true
+          }
+        }
+      },
+      {
+        "affected": "victim",
+        "effect": {
           "type": "enchiridion:freeze",
           "duration": {
             "type": "minecraft:linear",

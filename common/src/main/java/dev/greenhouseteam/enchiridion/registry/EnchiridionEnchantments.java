@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.registry;
 
 import dev.greenhouseteam.enchiridion.Enchiridion;
+import dev.greenhouseteam.enchiridion.enchantment.effects.ExtinguishEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.FreezeEntityEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
@@ -51,6 +52,8 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(
                         iceCrushEnchantable, iceCrushPrimaryEnchantable, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(elementExclusiveSet)
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, ExtinguishEffect.INSTANCE,
+                        DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new FreezeEntityEffect(LevelBasedValue.perLevel(300F, 160F)),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new FreezeEntityEffect(LevelBasedValue.perLevel(460F, 160F)),
