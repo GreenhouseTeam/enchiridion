@@ -85,14 +85,14 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
 
             getOrCreateTagBuilder(EnchantmentTags.NON_TREASURE)
                     .add(EnchiridionEnchantments.EXHILARATING)
-                    .add(EnchiridionEnchantments.ICE_CRUSH)
+                    .add(EnchiridionEnchantments.ICE_STRIKE)
                     .add(EnchiridionEnchantments.REACH);
             getOrCreateTagBuilder(EnchantmentTags.TREASURE)
                     .add(EnchiridionEnchantments.ASHES_CURSE);
 
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE)
                     .add(Enchantments.FIRE_ASPECT)
-                    .add(EnchiridionEnchantments.ICE_CRUSH);
+                    .add(EnchiridionEnchantments.ICE_STRIKE);
 
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.PRIMARY_CATEGORY)
                     .add(
@@ -123,7 +123,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SWEEPING_EDGE,
                             Enchantments.SWIFT_SNEAK,
                             EnchiridionEnchantments.EXHILARATING,
-                            EnchiridionEnchantments.ICE_CRUSH,
+                            EnchiridionEnchantments.ICE_STRIKE,
                             EnchiridionEnchantments.REACH
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.TERTIARY_CATEGORY)
@@ -164,10 +164,10 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(Enchiridion.ItemTags.ASHES_ENCHANTABLE)
                     .forceAddTag(ItemTags.WEAPON_ENCHANTABLE)
                     .forceAddTag(ItemTags.MINING_ENCHANTABLE);
-            getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_CRUSH_ENCHANTABLE)
+            getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_STRIKE_ENCHANTABLE)
                     .forceAddTag(Enchiridion.ItemTags.AXE_ENCHANTABLE)
                     .add(Items.MACE);
-            getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_CRUSH_PRIMARY_ENCHANTABLE);
+            getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_STRIKE_PRIMARY_ENCHANTABLE);
         }
     }
 }

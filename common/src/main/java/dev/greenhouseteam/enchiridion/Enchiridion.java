@@ -30,8 +30,8 @@ public class Enchiridion {
     public static class ItemTags {
         public static final TagKey<Item> ASHES_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ashes"));
         public static final TagKey<Item> AXE_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/axe"));
-        public static final TagKey<Item> ICE_CRUSH_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_crush"));
-        public static final TagKey<Item> ICE_CRUSH_PRIMARY_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_crush_primary"));
+        public static final TagKey<Item> ICE_STRIKE_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_strike"));
+        public static final TagKey<Item> ICE_STRIKE_PRIMARY_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_strike_primary"));
     }
 
     public static class EnchantmentTags {

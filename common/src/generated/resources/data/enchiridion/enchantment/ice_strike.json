@@ -1,7 +1,7 @@
 {
   "anvil_cost": 4,
   "description": {
-    "translate": "enchantment.enchiridion.ice_crush"
+    "translate": "enchantment.enchiridion.ice_strike"
   },
   "effects": {
     "enchiridion:post_shield_disable": [
@@ -71,10 +71,10 @@
     "base": 10,
     "per_level_above_first": 20
   },
-  "primary_items": "#enchiridion:enchantable/ice_crush_primary",
+  "primary_items": "#enchiridion:enchantable/ice_strike_primary",
   "slots": [
     "mainhand"
   ],
-  "supported_items": "#enchiridion:enchantable/ice_crush",
+  "supported_items": "#enchiridion:enchantable/ice_strike",
   "weight": 2
 }

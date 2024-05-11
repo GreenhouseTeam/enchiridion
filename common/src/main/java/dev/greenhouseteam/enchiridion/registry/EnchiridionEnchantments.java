@@ -28,7 +28,7 @@ import java.util.UUID;
 
 public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> EXHILARATING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("exhilarating"));
-    public static final ResourceKey<Enchantment> ICE_CRUSH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_crush"));
+    public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reach"));
 
     public static final ResourceKey<Enchantment> ASHES_CURSE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ashes_curse"));
@@ -36,8 +36,8 @@ public class EnchiridionEnchantments {
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
         HolderSet<Item> ashesEnchantable = items.getOrThrow(Enchiridion.ItemTags.ASHES_ENCHANTABLE);
-        HolderSet<Item> iceCrushEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_CRUSH_ENCHANTABLE);
-        HolderSet<Item> iceCrushPrimaryEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_CRUSH_PRIMARY_ENCHANTABLE);
+        HolderSet<Item> iceStrikeEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_STRIKE_ENCHANTABLE);
+        HolderSet<Item> iceStrikePrimaryEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_STRIKE_PRIMARY_ENCHANTABLE);
         HolderSet<Item> miningEnchantable = items.getOrThrow(ItemTags.MINING_ENCHANTABLE);
 
         HolderGetter<Enchantment> enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -49,15 +49,15 @@ public class EnchiridionEnchantments {
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_BLOCK_DROP, new Ignite(LevelBasedValue.constant(5.0F)))
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_ENTITY_DROP, new Ignite(LevelBasedValue.constant(5.0F)))
                 .build(EnchiridionEnchantments.ASHES_CURSE.location());
-        Enchantment iceCrush = Enchantment.enchantment(
+        Enchantment iceStrike = Enchantment.enchantment(
                 Enchantment.definition(
-                        iceCrushEnchantable, iceCrushPrimaryEnchantable, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
+                        iceStrikeEnchantable, iceStrikePrimaryEnchantable, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(elementExclusiveSet)
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEntityEffect(LevelBasedValue.perLevel(300F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEntityEffect(LevelBasedValue.perLevel(460F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
-                .build(EnchiridionEnchantments.ICE_CRUSH.location());
+                .build(EnchiridionEnchantments.ICE_STRIKE.location());
         Enchantment reach = Enchantment.enchantment(
                 Enchantment.definition(
                         miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlotGroup.MAINHAND))
@@ -71,7 +71,7 @@ public class EnchiridionEnchantments {
 
         context.register(EnchiridionEnchantments.ASHES_CURSE, ashesCurse);
         context.register(EnchiridionEnchantments.EXHILARATING, exhilarating);
-        context.register(EnchiridionEnchantments.ICE_CRUSH, iceCrush);
+        context.register(EnchiridionEnchantments.ICE_STRIKE, iceStrike);
         context.register(EnchiridionEnchantments.REACH, reach);
     }
 }
