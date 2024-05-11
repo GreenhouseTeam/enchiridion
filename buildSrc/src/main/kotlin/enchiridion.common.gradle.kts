@@ -9,6 +9,7 @@ plugins {
 }
 
 base.archivesName.set("${Properties.MOD_ID}-${Properties.MOD_NAME}")
+group = Properties.GROUP
 version = "${Versions.MOD}+${Versions.MINECRAFT}"
 
 java {

@@ -1,7 +1,7 @@
 package dev.greenhouseteam.enchiridion.gradle
 
 object Properties {
-    const val GROUP = "dev.greenhouseteam.enchiridion"
+    const val GROUP = "dev.greenhouseteam"
     const val MOD_NAME = "Enchiridion"
     const val MOD_ID = "enchiridion"
     const val MOD_AUTHOR = "Greenhouse Team"
