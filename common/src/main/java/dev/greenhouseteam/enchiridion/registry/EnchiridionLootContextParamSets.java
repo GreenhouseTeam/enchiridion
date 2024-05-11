@@ -23,4 +23,14 @@ public class EnchiridionLootContextParamSets {
             .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
             .optional(LootContextParams.ATTACKING_ENTITY)
             .build();
+
+    public static final LootContextParamSet VEHICLE_ENCHANTED_DAMAGE = LootContextParamSet.builder()
+            .required(LootContextParams.THIS_ENTITY)
+            .required(LootContextParams.ENCHANTMENT_LEVEL)
+            .required(LootContextParams.ORIGIN)
+            .required(LootContextParams.DAMAGE_SOURCE)
+            .required(EnchiridionLootContextParams.FIRST_PASSENGER)
+            .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
+            .optional(LootContextParams.ATTACKING_ENTITY)
+            .build();
 }

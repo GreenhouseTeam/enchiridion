@@ -142,7 +142,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.PROTECTION,
                             Enchantments.QUICK_CHARGE,
                             Enchantments.SHARPNESS,
-                            Enchantments.SMITE
+                            Enchantments.SMITE,
+                            EnchiridionEnchantments.BARDING
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.UNCATEGORISED_CATEGORY)
                     .add(

@@ -14,6 +14,7 @@
     "minecraft:protection",
     "minecraft:quick_charge",
     "minecraft:sharpness",
-    "minecraft:smite"
+    "minecraft:smite",
+    "enchiridion:barding"
   ]
 }
