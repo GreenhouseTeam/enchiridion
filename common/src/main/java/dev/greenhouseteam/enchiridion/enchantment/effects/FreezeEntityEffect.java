@@ -19,11 +19,11 @@ public record FreezeEntityEffect(LevelBasedValue duration) implements Enchantmen
 
     @Override
     public void apply(ServerLevel serverLevel, int level, EnchantedItemInUse enchantedItem, Entity entity, Vec3 origin) {
-        Enchiridion.getHelper().setFrozenByEnchantment(entity, true);
         int i = Mth.floor(this.duration.calculate(level));
         if (i < entity.getTicksFrozen())
             return;
         entity.setTicksFrozen(i);
+        Enchiridion.getHelper().setFrozenByEnchantment(entity, true);
     }
 
     @Override
