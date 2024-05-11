@@ -10,5 +10,7 @@
   "enchiridion.category.enchiridion.curse": "Curse",
 
   "resourcePack.enchiridion.default_enchanted_books.name": "Default Enchanted Books",
-  "resourcePack.enchiridion.default_enchanted_books.description": "Reverts the modified Enchanted Book textures."
+  "resourcePack.enchiridion.default_enchanted_books.description": "Reverts the modified Enchanted Book textures.",
+  "dataPack.enchiridion.vanilla_enchantment_modifications.name": "Enchiridion Vanilla Enchantment Modifications",
+  "dataPack.enchiridion.vanilla_enchantment_modifications.description": "Modifies vanilla enchantments to fit within Enchiridion."
 }
