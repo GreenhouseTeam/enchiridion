@@ -45,6 +45,7 @@
       }
     ]
   },
+  "exclusive_set": "#enchiridion:exclusive_set/elemental",
   "max_cost": {
     "base": 60,
     "per_level_above_first": 20

@@ -26,7 +26,7 @@ public class RegistryDataLoaderMixin {
     @ModifyVariable(method = "loadElementFromResource", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/mojang/serialization/DataResult;getOrThrow()Ljava/lang/Object;"))
     private static <E> E enchiridion$loadModificationsFromResource(E original, WritableRegistry<E> registry, Decoder<E> decoder, RegistryOps<JsonElement> ops, ResourceKey<E> key, Resource resource, RegistrationInfo info) {
         if (info != NETWORK_REGISTRATION_INFO && key.isFor(Registries.ENCHANTMENT) && (resource.source().packId().equals("vanilla")) || Enchiridion.getHelper().isLoaderResourcePack(resource))
-            return (E) EnchiridionModifications.modifyEnchantments((ResourceKey<Enchantment>) key, (Enchantment) original);
+            return (E) EnchiridionModifications.modifyEnchantments((ResourceKey<Enchantment>) key, (Enchantment) original, ops);
         return original;
     }
 }

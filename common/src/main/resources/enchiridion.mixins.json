@@ -16,11 +16,11 @@
     "PlayerMixin",
     "ProjectileWeaponItemMixin",
     "RegistryDataLoaderMixin",
-    "ServerPlayerMixin",
-    "client.LivingEntityMixin"
+    "ServerPlayerMixin"
   ],
   "client": [
     "client.ItemRendererMixin",
+    "client.LivingEntityMixin",
     "client.ModelManagerAccessor"
   ],
   "injectors": {

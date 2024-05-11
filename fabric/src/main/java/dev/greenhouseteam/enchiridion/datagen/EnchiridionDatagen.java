@@ -90,6 +90,10 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(EnchantmentTags.TREASURE)
                     .add(EnchiridionEnchantments.ASHES_CURSE);
 
+            getOrCreateTagBuilder(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE)
+                    .add(Enchantments.FIRE_ASPECT)
+                    .add(EnchiridionEnchantments.ICE_CRUSH);
+
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.PRIMARY_CATEGORY)
                     .add(
                             Enchantments.DEPTH_STRIDER,
