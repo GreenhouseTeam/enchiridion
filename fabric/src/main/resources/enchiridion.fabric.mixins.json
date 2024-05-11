@@ -10,7 +10,7 @@
   ],
   "client": [
     "client.MinecraftAccessor"
-  ]
+  ],
   "injectors": {
     "defaultRequire": 1
   }
