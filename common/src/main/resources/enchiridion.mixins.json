@@ -16,7 +16,8 @@
     "PlayerMixin",
     "ProjectileWeaponItemMixin",
     "RegistryDataLoaderMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "client.LivingEntityMixin"
   ],
   "client": [
     "client.ItemRendererMixin",

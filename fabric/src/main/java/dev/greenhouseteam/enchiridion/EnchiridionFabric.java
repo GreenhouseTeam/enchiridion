@@ -3,6 +3,7 @@ package dev.greenhouseteam.enchiridion;
 import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
 import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
 import dev.greenhouseteam.enchiridion.mixin.CreativeModeTabsAccessor;
+import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelperFabric;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
@@ -16,6 +17,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.util.TriState;
@@ -51,9 +53,8 @@ public class EnchiridionFabric implements ModInitializer {
             CreativeTabUtil.sortEnchantmentsBasedOnCategory(entries.getSearchTabStacks(), entries.getContext().holders());
         });
 
-        EnchiridionDataComponents.registerAll(Registry::register);
-        EnchiridionEnchantmentEffectComponents.registerAll(Registry::register);
-        EnchiridionEntityEnchantmentEffects.registerAll(Registry::register);
+        registerContents();
+        registerPackets();
 
         DynamicRegistries.registerSynced(EnchiridionRegistries.ENCHANTMENT_CATEGORY, EnchantmentCategory.DIRECT_CODEC);
 
@@ -70,6 +71,16 @@ public class EnchiridionFabric implements ModInitializer {
         });
 
         FabricLoader.getInstance().getModContainer(Enchiridion.MOD_ID).ifPresent(modContainer -> ResourceManagerHelper.registerBuiltinResourcePack(Enchiridion.asResource("default_enchanted_books"), modContainer, Component.translatable("resourcePack.enchiridion.default_enchanted_books.name"), ResourcePackActivationType.NORMAL));
+    }
+
+    public static void registerPackets() {
+        PayloadTypeRegistry.playS2C().register(SyncEnchantedFrozenStateClientboundPacket.TYPE, SyncEnchantedFrozenStateClientboundPacket.STREAM_CODEC);
+    }
+
+    public static void registerContents() {
+        EnchiridionDataComponents.registerAll(Registry::register);
+        EnchiridionEnchantmentEffectComponents.registerAll(Registry::register);
+        EnchiridionEntityEnchantmentEffects.registerAll(Registry::register);
     }
 
     public static RegistryAccess getRegistryAccess() {

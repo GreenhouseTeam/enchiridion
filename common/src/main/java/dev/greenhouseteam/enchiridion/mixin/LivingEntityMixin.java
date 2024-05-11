@@ -135,9 +135,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityPostEnti
 
     @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;removeFrost()V"))
     private void enchiridion$removeEnchantmentFrost(CallbackInfo ci) {
-        if (!this.level().isClientSide() && this.isAlive() && Enchiridion.getHelper().isFrozenByEnchantment(this) && !this.isInPowderSnow && this.tickCount % 8 == 0 && getTicksFrozen() > getTicksRequiredToFreeze())
-            ((ServerLevel)this.level()).sendParticles(ParticleTypes.SNOWFLAKE, this.getX(), this.getY(0.5), this.getZ(), 2, this.getBoundingBox().getXsize() / 4, this.getBoundingBox().getYsize() / 4, this.getBoundingBox().getZsize() / 4, 0.025);
-
         if (Enchiridion.getHelper().isFrozenByEnchantment(this) && getTicksFrozen() <= 0)
             Enchiridion.getHelper().setFrozenByEnchantment(this, false);
     }
