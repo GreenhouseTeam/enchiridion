@@ -8,12 +8,20 @@
       {
         "affected": "victim",
         "effect": {
-          "type": "enchiridion:freeze",
-          "duration": {
-            "type": "minecraft:linear",
-            "base": 460.0,
-            "per_level_above_first": 160.0
-          }
+          "type": "minecraft:all_of",
+          "effects": [
+            {
+              "type": "enchiridion:extinguish"
+            },
+            {
+              "type": "enchiridion:freeze",
+              "duration": {
+                "type": "minecraft:linear",
+                "base": 460.0,
+                "per_level_above_first": 160.0
+              }
+            }
+          ]
         },
         "enchanted": "attacker",
         "requirements": {
@@ -28,25 +36,20 @@
       {
         "affected": "victim",
         "effect": {
-          "type": "enchiridion:extinguish"
-        },
-        "enchanted": "attacker",
-        "requirements": {
-          "condition": "minecraft:damage_source_properties",
-          "predicate": {
-            "is_direct": true
-          }
-        }
-      },
-      {
-        "affected": "victim",
-        "effect": {
-          "type": "enchiridion:freeze",
-          "duration": {
-            "type": "minecraft:linear",
-            "base": 300.0,
-            "per_level_above_first": 160.0
-          }
+          "type": "minecraft:all_of",
+          "effects": [
+            {
+              "type": "enchiridion:extinguish"
+            },
+            {
+              "type": "enchiridion:freeze",
+              "duration": {
+                "type": "minecraft:linear",
+                "base": 300.0,
+                "per_level_above_first": 160.0
+              }
+            }
+          ]
         },
         "enchanted": "attacker",
         "requirements": {
