@@ -19,4 +19,6 @@ public interface EnchiridionPlatformHelper {
     RegistryAccess getReqistryAccess();
 
     boolean isLoaderResourcePack(Resource resource);
+
+    boolean isClientThread();
 }

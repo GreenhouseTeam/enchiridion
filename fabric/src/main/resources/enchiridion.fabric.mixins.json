@@ -1,13 +1,16 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "dev.greenhouseteam.enchiridion.mixin",
+  "package": "dev.greenhouseteam.enchiridion.mixin.fabric",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "fabric.TagEntryAccessor",
-    "fabric.TagLoaderMixin"
+    "TagEntryAccessor",
+    "TagLoaderMixin"
   ],
+  "client": [
+    "client.MinecraftAccessor"
+  ]
   "injectors": {
     "defaultRequire": 1
   }

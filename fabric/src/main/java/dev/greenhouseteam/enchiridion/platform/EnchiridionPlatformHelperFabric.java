@@ -1,7 +1,9 @@
 package dev.greenhouseteam.enchiridion.platform;
 
 import dev.greenhouseteam.enchiridion.EnchiridionFabric;
+import dev.greenhouseteam.enchiridion.mixin.fabric.client.MinecraftAccessor;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.resources.Resource;
@@ -33,5 +35,10 @@ public class EnchiridionPlatformHelperFabric implements EnchiridionPlatformHelpe
     @Override
     public boolean isLoaderResourcePack(Resource resource) {
         return resource.source().location().title().contains(Component.translatable("pack.name.fabricMod"));
+    }
+
+    @Override
+    public boolean isClientThread() {
+        return Thread.currentThread() == ((MinecraftAccessor) Minecraft.getInstance()).enchiridion$getGameThread();
     }
 }
