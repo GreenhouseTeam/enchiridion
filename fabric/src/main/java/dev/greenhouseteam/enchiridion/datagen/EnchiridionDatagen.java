@@ -106,7 +106,6 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(
                             Enchantments.AQUA_AFFINITY,
                             Enchantments.CHANNELING,
-                            Enchantments.BREACH,
                             Enchantments.FIRE_ASPECT,
                             Enchantments.FLAME,
                             Enchantments.KNOCKBACK,
@@ -122,6 +121,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(
                             Enchantments.BANE_OF_ARTHROPODS,
                             Enchantments.BLAST_PROTECTION,
+                            Enchantments.BREACH,
                             Enchantments.DENSITY,
                             Enchantments.EFFICIENCY,
                             Enchantments.FEATHER_FALLING,
