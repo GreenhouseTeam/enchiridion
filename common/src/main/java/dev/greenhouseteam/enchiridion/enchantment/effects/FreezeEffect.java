@@ -11,10 +11,10 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 
-public record FreezeEntityEffect(LevelBasedValue duration) implements EnchantmentEntityEffect {
-    public static final MapCodec<FreezeEntityEffect> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            LevelBasedValue.CODEC.fieldOf("duration").forGetter(FreezeEntityEffect::duration)
-    ).apply(inst, FreezeEntityEffect::new));
+public record FreezeEffect(LevelBasedValue duration) implements EnchantmentEntityEffect {
+    public static final MapCodec<FreezeEffect> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            LevelBasedValue.CODEC.fieldOf("duration").forGetter(FreezeEffect::duration)
+    ).apply(inst, FreezeEffect::new));
 
 
     @Override
@@ -27,7 +27,7 @@ public record FreezeEntityEffect(LevelBasedValue duration) implements Enchantmen
     }
 
     @Override
-    public MapCodec<FreezeEntityEffect> codec() {
+    public MapCodec<FreezeEffect> codec() {
         return CODEC;
     }
 }
