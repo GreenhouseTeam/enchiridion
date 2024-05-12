@@ -5,6 +5,7 @@ import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
@@ -44,6 +45,10 @@ public class Enchiridion {
         public static final TagKey<Enchantment> UNCATEGORISED_CATEGORY = TagKey.create(Registries.ENCHANTMENT, asResource("category/uncategorised"));
 
         public static final TagKey<Enchantment> ELEMENTAL_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, asResource("exclusive_set/elemental"));
+    }
+
+    public static class EntityTypeTags {
+        public static final TagKey<EntityType<?>> IGNORES_BARDING = TagKey.create(Registries.ENTITY_TYPE, asResource("ignores_barding"));
     }
 
     public static class ItemTags {

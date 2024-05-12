@@ -23,6 +23,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagBuilder;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -37,6 +38,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(EnchantmentTagProvider::new);
         pack.addProvider(DynamicRegistryProvider::new);
         pack.addProvider(BlockTagProvider::new);
+        pack.addProvider(EntityTypeTagProvider::new);
         pack.addProvider(ItemTagProvider::new);
     }
 
@@ -77,9 +79,9 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
         }
     }
 
-    public static class EnchantmentTagProvider extends FabricTagProvider<Enchantment> {
+    public static class EnchantmentTagProvider extends FabricTagProvider.EnchantmentTagProvider {
         public EnchantmentTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-            super(output, Registries.ENCHANTMENT, registriesFuture);
+            super(output, registriesFuture);
         }
 
         @Override
@@ -173,6 +175,19 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .forceAddTag(BlockTags.BASE_STONE_OVERWORLD)
                     .forceAddTag(BlockTags.BASE_STONE_NETHER)
                     .add(Blocks.END_STONE);
+        }
+    }
+
+    public static class EntityTypeTagProvider extends FabricTagProvider.EntityTypeTagProvider {
+        public EntityTypeTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+            super(output, completableFuture);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider wrapperLookup) {
+            getOrCreateTagBuilder(Enchiridion.EntityTypeTags.IGNORES_BARDING)
+                    .add(EntityType.BOAT)
+                    .add(EntityType.MINECART);
         }
     }
 

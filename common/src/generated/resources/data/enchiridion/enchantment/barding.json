@@ -15,15 +15,91 @@
           }
         },
         "requirements": {
-          "condition": "minecraft:damage_source_properties",
-          "predicate": {
-            "tags": [
-              {
-                "expected": false,
-                "id": "minecraft:bypasses_invulnerability"
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:damage_source_properties",
+              "predicate": {
+                "tags": [
+                  {
+                    "expected": false,
+                    "id": "minecraft:bypasses_invulnerability"
+                  }
+                ]
               }
-            ]
-          }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:entity_properties",
+                "entity": "this",
+                "predicate": {
+                  "vehicle": {
+                    "type": "#enchiridion:ignores_barding"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "minecraft:tick": [
+      {
+        "effect": {
+          "type": "enchiridion:riding_entity",
+          "effect": {
+            "type": "minecraft:spawn_particles",
+            "horizontal_position": {
+              "type": "in_bounding_box"
+            },
+            "horizontal_velocity": {
+              "base": {
+                "type": "minecraft:uniform",
+                "max_exclusive": 0.1,
+                "min_inclusive": -0.1
+              }
+            },
+            "particle": {
+              "type": "minecraft:end_rod"
+            },
+            "speed": 1.0,
+            "vertical_position": {
+              "type": "in_bounding_box"
+            },
+            "vertical_velocity": {
+              "base": {
+                "type": "minecraft:uniform",
+                "max_exclusive": 0.1,
+                "min_inclusive": -0.1
+              }
+            }
+          },
+          "target": "vehicle"
+        },
+        "requirements": {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "periodic_tick": 5
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:entity_properties",
+                "entity": "this",
+                "predicate": {
+                  "vehicle": {
+                    "type": "#enchiridion:ignores_barding"
+                  }
+                }
+              }
+            }
+          ]
         }
       }
     ]
