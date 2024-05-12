@@ -2,7 +2,7 @@ package dev.greenhouseteam.enchiridion.registry;
 
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.enchantment.effects.ExtinguishEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.FreezeEntityEffect;
+import dev.greenhouseteam.enchiridion.enchantment.effects.FreezeEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.TagPredicate;
@@ -26,12 +26,14 @@ import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.minecraft.world.item.enchantment.effects.AllOf;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.Ignite;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 
 import java.util.UUID;
 
 public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> BARDING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("barding"));
+    public static final ResourceKey<Enchantment> CRUMBLE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("crumble"));
     public static final ResourceKey<Enchantment> EXHILARATING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("exhilarating"));
     public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reach"));
@@ -40,16 +42,21 @@ public class EnchiridionEnchantments {
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
+
         HolderSet<Item> legArmorEnchantable = items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE);
         HolderSet<Item> miningEnchantable = items.getOrThrow(ItemTags.MINING_ENCHANTABLE);
-
         HolderSet<Item> ashesEnchantable = items.getOrThrow(Enchiridion.ItemTags.ASHES_ENCHANTABLE);
+        HolderSet<Item> pickaxeEnchantable = items.getOrThrow(Enchiridion.ItemTags.PICKAXE_ENCHANTABLE);
         HolderSet<Item> iceStrikeEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_STRIKE_ENCHANTABLE);
         HolderSet<Item> iceStrikePrimaryEnchantable = items.getOrThrow(Enchiridion.ItemTags.ICE_STRIKE_PRIMARY_ENCHANTABLE);
 
         HolderGetter<Enchantment> enchantments = context.lookup(Registries.ENCHANTMENT);
-        HolderSet<Enchantment> armorExclusiveSet = enchantments.getOrThrow(EnchantmentTags.ARMOR_EXCLUSIVE);
-        HolderSet<Enchantment> elementExclusiveSet = enchantments.getOrThrow(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE);
+
+        HolderSet<Enchantment> miningExclusiveSet = enchantments.getOrThrow(EnchantmentTags.MINING_EXCLUSIVE);
+        HolderSet<Enchantment> elementalExclusiveSet = enchantments.getOrThrow(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE);
+
+        HolderGetter<Block> blocks = context.lookup(Registries.BLOCK);
+        HolderSet<Block> baseStone = blocks.getOrThrow(Enchiridion.BlockTags.BASE_STONE);
 
         Enchantment ashesCurse = Enchantment.enchantment(
                 Enchantment.definition(
@@ -64,13 +71,19 @@ public class EnchiridionEnchantments {
                 .withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(2.0F)),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.isNot(DamageTypeTags.BYPASSES_INVULNERABILITY))))
                 .build(BARDING.location());
+        Enchantment crumble = Enchantment.enchantment(
+                        Enchantment.definition(
+                                pickaxeEnchantable, 2, 1, Enchantment.constantCost(33), Enchantment.constantCost(83), 4, EquipmentSlotGroup.MAINHAND)
+                ).exclusiveWith(miningExclusiveSet)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", EnchiridionAttributes.BASE_STONE_MINING_SPEED, LevelBasedValue.constant(0.88F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")))
+                .build(CRUMBLE.location());
         Enchantment iceStrike = Enchantment.enchantment(
                 Enchantment.definition(
                         iceStrikeEnchantable, iceStrikePrimaryEnchantable, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND)
-                ).exclusiveWith(elementExclusiveSet)
-                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEntityEffect(LevelBasedValue.perLevel(300F, 160F))),
+                ).exclusiveWith(elementalExclusiveSet)
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEffect(LevelBasedValue.perLevel(300F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
-                .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEntityEffect(LevelBasedValue.perLevel(460F, 160F))),
+                .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEffect(LevelBasedValue.perLevel(460F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
                 .build(ICE_STRIKE.location());
         Enchantment reach = Enchantment.enchantment(
@@ -86,6 +99,7 @@ public class EnchiridionEnchantments {
 
         context.register(ASHES_CURSE, ashesCurse);
         context.register(BARDING, barding);
+        context.register(CRUMBLE, crumble);
         context.register(EXHILARATING, exhilarating);
         context.register(ICE_STRIKE, iceStrike);
         context.register(REACH, reach);

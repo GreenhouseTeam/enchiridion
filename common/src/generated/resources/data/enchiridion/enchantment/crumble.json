@@ -1,0 +1,32 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.enchiridion.crumble"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "amount": 0.88,
+        "attribute": "enchiridion:player.base_stone_mining_speed",
+        "name": "enchantment.enchiridion.crumble",
+        "operation": "add_value",
+        "uuid": "031e1965-9647-4271-8bf2-7aecdd20ab09"
+      }
+    ]
+  },
+  "exclusive_set": "#minecraft:exclusive_set/mining",
+  "max_cost": {
+    "base": 83,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 33,
+    "per_level_above_first": 0
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#enchiridion:enchantable/pickaxe",
+  "weight": 2
+}

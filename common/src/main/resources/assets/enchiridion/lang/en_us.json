@@ -1,6 +1,7 @@
 {
   "enchantment.enchiridion.ashes_curse": "Curse of Ashes",
   "enchantment.enchiridion.barding": "Barding",
+  "enchantment.enchiridion.crumble": "Crumble",
   "enchantment.enchiridion.exhilarating": "Exhilarating",
   "enchantment.enchiridion.ice_strike": "Ice Strike",
   "enchantment.enchiridion.reach": "Reach",
@@ -9,6 +10,8 @@
   "enchiridion.category.enchiridion.secondary": "Secondary",
   "enchiridion.category.enchiridion.tertiary": "Tertiary",
   "enchiridion.category.enchiridion.curse": "Curse",
+
+  "attribute.name.player.enchiridion.base_stone_mining_speed": "Base Stone Mining Speed",
 
   "resourcePack.enchiridion.default_enchanted_books.name": "Default Enchanted Books",
   "resourcePack.enchiridion.default_enchanted_books.description": "Reverts the modified Enchanted Book textures.",

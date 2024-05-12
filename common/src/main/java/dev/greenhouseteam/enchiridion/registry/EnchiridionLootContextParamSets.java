@@ -1,9 +1,20 @@
 package dev.greenhouseteam.enchiridion.registry;
 
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 public class EnchiridionLootContextParamSets {
+    public static final LootContextParamSet ENCHANTED_BLOCK = LootContextParamSet.builder()
+            .required(LootContextParams.BLOCK_STATE)
+            .required(LootContextParams.ENCHANTMENT_LEVEL)
+            .required(LootContextParams.ORIGIN)
+            .required(LootContextParams.TOOL)
+            .optional(LootContextParams.THIS_ENTITY)
+            .optional(LootContextParams.BLOCK_ENTITY)
+            .optional(LootContextParams.EXPLOSION_RADIUS)
+            .build();
+
     public static final LootContextParamSet ENCHANTED_BLOCK_DROP = LootContextParamSet.builder()
             .required(LootContextParams.TOOL)
             .required(LootContextParams.ENCHANTMENT_LEVEL)
