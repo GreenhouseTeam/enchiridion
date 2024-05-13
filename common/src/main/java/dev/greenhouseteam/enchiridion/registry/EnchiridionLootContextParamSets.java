@@ -12,7 +12,6 @@ public class EnchiridionLootContextParamSets {
             .required(LootContextParams.TOOL)
             .optional(LootContextParams.THIS_ENTITY)
             .optional(LootContextParams.BLOCK_ENTITY)
-            .optional(LootContextParams.EXPLOSION_RADIUS)
             .build();
 
     public static final LootContextParamSet ENCHANTED_BLOCK_DROP = LootContextParamSet.builder()

@@ -14,7 +14,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.entity.EntityLookup;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class EnchiridionPlatformHelperFabric implements EnchiridionPlatformHelper {
 

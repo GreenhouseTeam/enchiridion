@@ -9,7 +9,6 @@ import dev.greenhouseteam.enchiridion.mixin.fabric.LootPoolAccessor;
 import dev.greenhouseteam.enchiridion.mixin.fabric.LootTableBuilderAccessor;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelperFabric;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionAttributes;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantments;
@@ -133,7 +132,6 @@ public class EnchiridionFabric implements ModInitializer {
 
         registerContents();
         registerPackets();
-        registerAttributes();
 
         ServerLifecycleEvents.SERVER_STARTING.register(server1 -> server = server1);
         ServerLifecycleEvents.SERVER_STOPPED.register(server1 -> server = null);
@@ -159,21 +157,11 @@ public class EnchiridionFabric implements ModInitializer {
     }
 
     public static void registerContents() {
-        EnchiridionAttributes.registerAll(Registry::registerForHolder);
         EnchiridionDataComponents.registerAll(Registry::register);
         EnchiridionEnchantmentEffectComponents.registerAll(Registry::register);
         EnchiridionEntityEnchantmentEffects.registerAll(Registry::register);
 
         DynamicRegistries.registerSynced(EnchiridionRegistries.ENCHANTMENT_CATEGORY, EnchantmentCategory.DIRECT_CODEC);
-    }
-
-    private static void registerAttributes() {
-        AttributeSupplier.Builder builder = AttributeSupplier.builder();
-        for (Map.Entry<Holder<Attribute>, AttributeInstance> supplier : ((AttributeSupplierAccessor)DefaultAttributes.getSupplier(EntityType.PLAYER)).enchiridion$getInstances().entrySet()) {
-            builder.add(supplier.getKey(), supplier.getValue().getBaseValue());
-        }
-        builder.add(EnchiridionAttributes.BASE_STONE_MINING_SPEED);
-        FabricDefaultAttributeRegistry.register(EntityType.PLAYER, builder.build());
     }
 
     public static RegistryAccess getRegistryAccess() {

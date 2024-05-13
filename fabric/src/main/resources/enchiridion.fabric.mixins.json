@@ -6,10 +6,10 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AttributeSupplierAccessor",
-    "BlockBehaviourMixin",
     "LootPoolAccessor",
     "LootTableBuilderAccessor",
     "ReloadableServerRegistriesMixin",
+    "ServerPlayerMixin",
     "TagEntryAccessor",
     "TagLoaderMixin"
   ],

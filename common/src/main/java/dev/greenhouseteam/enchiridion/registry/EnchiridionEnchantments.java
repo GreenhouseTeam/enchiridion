@@ -8,6 +8,7 @@ import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.EntityTypePredicate;
+import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.TagPredicate;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -15,6 +16,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
@@ -36,6 +38,7 @@ import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
 import java.util.UUID;
@@ -91,8 +94,13 @@ public class EnchiridionEnchantments {
                         Enchantment.definition(
                                 pickaxeEnchantable, 2, 1, Enchantment.constantCost(33), Enchantment.constantCost(83), 4, EquipmentSlotGroup.MAINHAND)
                 ).exclusiveWith(miningExclusiveSet)
-                .withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", EnchiridionAttributes.BASE_STONE_MINING_SPEED, LevelBasedValue.constant(0.88F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")))
-                .build(CRUMBLE.location());
+                .withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.BLOCK_BREAK_SPEED, LevelBasedValue.constant(1.0F), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
+                        LocationCheck.checkLocation(
+                                LocationPredicate.Builder.location()
+                                .setBlock(
+                                        net.minecraft.advancements.critereon.BlockPredicate.Builder.block()
+                                                .of(Enchiridion.BlockTags.BASE_STONE)))
+                ).build(CRUMBLE.location());
         Enchantment exhilarating = Enchantment.enchantment(
                         Enchantment.definition(
                                 miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)

@@ -14,8 +14,7 @@
     "ItemEnchantmentsAccessor",
     "LivingEntityMixin",
     "PlayerMixin",
-    "ProjectileWeaponItemMixin",
-    "ServerPlayerMixin"
+    "ProjectileWeaponItemMixin"
   ],
   "client": [
     "client.ItemRendererMixin",

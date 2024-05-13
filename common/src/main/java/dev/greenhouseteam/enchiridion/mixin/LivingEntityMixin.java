@@ -47,8 +47,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityPostEnti
 
     @Shadow public abstract boolean isAlive();
 
-    @Shadow public abstract int getTicksUsingItem();
-
     @Unique
     private static LootParams.Builder enchiridion$builder;
 
