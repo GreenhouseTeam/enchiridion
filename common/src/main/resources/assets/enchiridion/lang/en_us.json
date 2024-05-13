@@ -11,8 +11,6 @@
   "enchiridion.category.enchiridion.tertiary": "Tertiary",
   "enchiridion.category.enchiridion.curse": "Curse",
 
-  "attribute.name.player.enchiridion.block_hardness_multiplier": "Mining Hardness Multiplier",
-
   "resourcePack.enchiridion.default_enchanted_books.name": "Default Enchanted Books",
   "resourcePack.enchiridion.default_enchanted_books.description": "Reverts the modified Enchanted Book textures.",
   "dataPack.enchiridion.vanilla_enchantment_modifications.name": "Enchiridion Vanilla Enchantment Modifications",
