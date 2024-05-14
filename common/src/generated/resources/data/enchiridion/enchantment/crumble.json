@@ -8,7 +8,7 @@
       {
         "effect": {
           "type": "minecraft:attribute",
-          "amount": 0.9,
+          "amount": 0.88,
           "attribute": "minecraft:player.block_break_speed",
           "name": "enchantment.enchiridion.crumble",
           "operation": "add_multiplied_total",

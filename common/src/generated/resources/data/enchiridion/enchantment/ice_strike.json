@@ -14,6 +14,20 @@
               "type": "enchiridion:extinguish"
             },
             {
+              "type": "minecraft:damage_entity",
+              "damage_type": "minecraft:freeze",
+              "max_damage": {
+                "type": "minecraft:linear",
+                "base": 2.0,
+                "per_level_above_first": 2.0
+              },
+              "min_damage": {
+                "type": "minecraft:linear",
+                "base": 2.0,
+                "per_level_above_first": 2.0
+              }
+            },
+            {
               "type": "enchiridion:freeze",
               "duration": {
                 "type": "minecraft:linear",

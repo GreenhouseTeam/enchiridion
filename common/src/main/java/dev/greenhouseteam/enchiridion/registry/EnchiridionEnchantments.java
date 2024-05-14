@@ -10,18 +10,20 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.EntityTypePredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.TagPredicate;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.UniformFloat;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -32,6 +34,7 @@ import net.minecraft.world.item.enchantment.EnchantmentTarget;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.minecraft.world.item.enchantment.effects.AllOf;
+import net.minecraft.world.item.enchantment.effects.DamageEntity;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.Ignite;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
@@ -67,6 +70,9 @@ public class EnchiridionEnchantments {
         HolderSet<Enchantment> miningExclusiveSet = enchantments.getOrThrow(EnchantmentTags.MINING_EXCLUSIVE);
         HolderSet<Enchantment> elementalExclusiveSet = enchantments.getOrThrow(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE);
 
+        HolderGetter<DamageType> damageType = context.lookup(Registries.DAMAGE_TYPE);
+        Holder<DamageType> freeze = damageType.getOrThrow(DamageTypes.FREEZE);
+
         Enchantment ashesCurse = Enchantment.enchantment(
                 Enchantment.definition(
                         ashesEnchantable, 1, 1, Enchantment.constantCost(25), Enchantment.constantCost(50), 8, EquipmentSlotGroup.MAINHAND)
@@ -94,7 +100,7 @@ public class EnchiridionEnchantments {
                         Enchantment.definition(
                                 pickaxeEnchantable, 2, 1, Enchantment.constantCost(33), Enchantment.constantCost(83), 4, EquipmentSlotGroup.MAINHAND)
                 ).exclusiveWith(miningExclusiveSet)
-                .withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.BLOCK_BREAK_SPEED, LevelBasedValue.constant(1.0F), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
+                .withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.BLOCK_BREAK_SPEED, LevelBasedValue.constant(0.88F), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
                         LocationCheck.checkLocation(
                                 LocationPredicate.Builder.location()
                                 .setBlock(
@@ -112,7 +118,7 @@ public class EnchiridionEnchantments {
                 ).exclusiveWith(elementalExclusiveSet)
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEffect(LevelBasedValue.perLevel(300F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
-                .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new FreezeEffect(LevelBasedValue.perLevel(460F, 160F))),
+                .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new DamageEntity(LevelBasedValue.perLevel(2.0F), LevelBasedValue.perLevel(2.0F), freeze), new FreezeEffect(LevelBasedValue.perLevel(460F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
                 .build(ICE_STRIKE.location());
         Enchantment reach = Enchantment.enchantment(
