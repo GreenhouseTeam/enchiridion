@@ -89,7 +89,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
     }
 
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 0))
-    private <E> E enchiridion$modifyLapisCountForLevelling(E original, @Local(ordinal = 3) int i) {
+    private <E> E enchiridion$modifyEnchantMessageToLevelUpMessage(E original, @Local(ordinal = 3) int i) {
         if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) != -1) {
             Holder<Enchantment> enchantment = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(menu.enchantClue[i]);
             if (enchantment != null && enchantment.isBound())
@@ -98,7 +98,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         return original;
     }
 
-    @ModifyVariable(method = "render", at = @At(value = "LOAD"), ordinal = 6)
+    @ModifyVariable(method = "render", at = @At(value = "LOAD", ordinal = 0), ordinal = 6)
     private int enchiridion$modifyLapisCountForLevelling(int original, @Local(ordinal = 3) int i) {
         if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) != -1) {
             Holder<Enchantment> enchantment = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(menu.enchantClue[i]);
