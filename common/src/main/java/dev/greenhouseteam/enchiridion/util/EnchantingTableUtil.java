@@ -1,8 +1,6 @@
 package dev.greenhouseteam.enchiridion.util;
 
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 

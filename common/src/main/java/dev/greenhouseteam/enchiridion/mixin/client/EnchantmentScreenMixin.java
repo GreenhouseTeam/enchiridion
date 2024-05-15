@@ -4,16 +4,21 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.access.UpgradeableEnchantmentMenuAccess;
+import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.util.EnchantingTableUtil;
+import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EnchantmentScreen;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mixin(EnchantmentScreen.class)
 public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<EnchantmentMenu> {
@@ -78,12 +84,35 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         return original;
     }
 
+    @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;translatable(Ljava/lang/String;[Ljava/lang/Object;)Lnet/minecraft/network/chat/MutableComponent;", ordinal = 0))
+    private Object[] enchiridion$modifyEnchantingTableClueColour(Object[] original, @Local(ordinal = 3) int i) {
+        Holder<Enchantment> enchantment = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(menu.enchantClue[i]);
+        if (enchantment != null && enchantment.isBound()) {
+            ItemStack stack = this.menu.getSlot(0).getItem();
+            Optional<Integer> color = Optional.ofNullable(EnchiridionUtil.lookupFirstEnchantmentCategory(minecraft.level.registryAccess(), enchantment, stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY))).flatMap(holder -> {
+                if (!holder.isBound())
+                    return Optional.empty();
+                return Optional.of(holder.value().color().getValue());
+            });
+            if (color.isPresent())
+                original[0] = color.map(integer -> ((MutableComponent)original[0]).withColor(integer)).get();
+        }
+        return original;
+    }
+
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 0))
     private <E> E enchiridion$modifyEnchantMessageToLevelUpMessage(E original, @Local(ordinal = 3) int i) {
         if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) != -1) {
             Holder<Enchantment> enchantment = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(menu.enchantClue[i]);
-            if (enchantment != null && enchantment.isBound())
-                return (E) Component.translatable("container.enchiridion.enchant.level_up", Enchantment.getFullname(enchantment, menu.levelClue[i] - 1), Enchantment.getFullname(enchantment, menu.levelClue[i]));
+            if (enchantment != null && enchantment.isBound()) {
+                ItemStack stack = this.menu.getSlot(0).getItem();
+                Optional<Integer> color = Optional.ofNullable(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY).findFirstCategory(enchantment)).flatMap(holder -> {
+                    if (!holder.isBound())
+                        return Optional.empty();
+                    return Optional.of(holder.value().color().getValue());
+                });
+                return color.map(integer -> (E) Component.translatable("container.enchiridion.enchant.level_up", ((MutableComponent) Enchantment.getFullname(enchantment, menu.levelClue[i] - 1)).withColor(integer), ((MutableComponent) Enchantment.getFullname(enchantment, menu.levelClue[i])).withColor(integer))).orElseGet(() -> (E) Component.translatable("container.enchiridion.enchant.level_up", ((MutableComponent) Enchantment.getFullname(enchantment, menu.levelClue[i] - 1)), Enchantment.getFullname(enchantment, menu.levelClue[i])));
+            }
         }
         return original;
     }

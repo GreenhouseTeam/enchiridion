@@ -40,6 +40,12 @@ public class EnchiridionUtil {
     }
 
     @Nullable
+    public static Holder<EnchantmentCategory> lookupFirstEnchantmentCategory(HolderLookup.Provider registries, Holder<Enchantment> enchantment, ItemEnchantmentCategories categories) {
+        List<Holder.Reference<EnchantmentCategory>> applicable = registries.lookupOrThrow(EnchiridionRegistries.ENCHANTMENT_CATEGORY).listElements().filter(category -> categories.isValid(category, enchantment)).toList();
+        return applicable.stream().max(Comparator.comparingInt(value -> value.value().priority())).orElse(null);
+    }
+
+    @Nullable
     public static Holder<EnchantmentCategory> getFirstEnchantmentCategory(HolderLookup.Provider registries, ItemEnchantments enchantments, ItemEnchantmentCategories categories) {
         Optional<HolderSet.Named<Enchantment>> tooltipOrderTag = registries.lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.TOOLTIP_ORDER);
         if (tooltipOrderTag.isEmpty())

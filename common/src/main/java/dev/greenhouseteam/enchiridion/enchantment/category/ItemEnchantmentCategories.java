@@ -64,6 +64,16 @@ public class ItemEnchantmentCategories {
         return List.copyOf(enchantmentCategories.get(category));
     }
 
+    public boolean isValid(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment) {
+        if (!category.isBound())
+            return false;
+        if (!category.value().acceptedEnchantments().contains(enchantment))
+            return false;
+        if (category.value().limit().isEmpty() || !enchantmentCategories.containsKey(category))
+            return true;
+        return category.value().limit().get() < enchantmentCategories.get(category).size();
+    }
+
     public boolean contains(Holder<Enchantment> enchantment) {
         return enchantmentCategories.values().stream().anyMatch(holders -> holders.contains(enchantment));
     }
