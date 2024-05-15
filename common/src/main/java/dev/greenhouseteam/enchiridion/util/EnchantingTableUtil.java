@@ -11,7 +11,7 @@ public class EnchantingTableUtil {
         if (enchantmentValue <= 0) {
             return 25;
         }
-        return Math.min(25, Mth.floor(1 + (((float)level / (float)maxLevel) * 14.0F) + ((20.0F / enchantmentValue) * 3)));
+        return Math.clamp(Mth.floor((((float)level / (float)maxLevel) * 12.0F) + ((20.0F / enchantmentValue) * 3.0)), 1, 25);
     }
 
     public static int getMinimumBookshelfAmountForLevelling(int level, int maxLevel) {

@@ -117,10 +117,10 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                     if (holder.getIntValue() < maxLevel) {
                         ++size;
                         if (j < 3) {
-                            this.costs[j] = EnchantingTableUtil.getLevelUpCost(holder.getIntValue(), maxLevel, stack);
+                            this.costs[j] = EnchantingTableUtil.getLevelUpCost(holder.getIntValue() + 1, maxLevel, stack);
                             this.enchantClue[j] = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getId(holder.getKey().value());
                             this.levelClue[j] = holder.getIntValue() + 1;
-                            int bookshelfCount = EnchantingTableUtil.getMinimumBookshelfAmountForLevelling(holder.getIntValue(), maxLevel);
+                            int bookshelfCount = EnchantingTableUtil.getMinimumBookshelfAmountForLevelling(holder.getIntValue() + 1, maxLevel);
                             enchiridion$requiredBookshelves[j] = bookshelfCount;
                             enchiridion$bookshelfCount[j] = i;
                             ++j;
