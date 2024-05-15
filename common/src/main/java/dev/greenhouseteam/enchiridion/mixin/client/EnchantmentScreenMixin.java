@@ -36,14 +36,14 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
     }
 
     @ModifyArg(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V", ordinal = 2))
-    private ResourceLocation enchiridion$renderDisabledUpgradeWidget(ResourceLocation original, @Local(ordinal = 5) int i) {
+    private ResourceLocation enchiridion$renderDisabledLevelUpWidget(ResourceLocation original, @Local(ordinal = 5) int i) {
         if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) != -1)
             return Enchiridion.asResource("container/enchanting_table/level_up_disabled");
         return original;
     }
 
     @ModifyArg(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V", ordinal = 5))
-    private ResourceLocation enchiridion$renderUpgradeWidget(ResourceLocation original, @Local(ordinal = 5) int i) {
+    private ResourceLocation enchiridion$renderLevelUpWidget(ResourceLocation original, @Local(ordinal = 5) int i) {
         if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) != -1)
             return Enchiridion.asResource("container/enchanting_table/level_up");
         return original;
