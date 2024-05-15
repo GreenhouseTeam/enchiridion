@@ -10,6 +10,7 @@
     "CreativeModeTabsAccessor",
     "CrossbowItemMixin",
     "EnchantmentHelperMixin",
+    "EnchantmentMenuMixin",
     "EntityMixin",
     "ItemEnchantmentsAccessor",
     "LivingEntityMixin",
@@ -17,6 +18,7 @@
     "ProjectileWeaponItemMixin"
   ],
   "client": [
+    "client.EnchantmentScreenMixin",
     "client.ItemRendererMixin",
     "client.LivingEntityMixin",
     "client.ModelManagerAccessor"

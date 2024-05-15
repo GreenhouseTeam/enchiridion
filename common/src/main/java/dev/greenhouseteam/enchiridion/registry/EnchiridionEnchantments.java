@@ -83,7 +83,12 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(
                         legArmorEnchantable, 5, 4, Enchantment.dynamicCost(5, 6), Enchantment.dynamicCost(11, 6), 2, EquipmentSlotGroup.ARMOR)
                 )
-                .withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(2.0F)),
+                .withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(3.0F)),
+                        DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.isNot(DamageTypeTags.BYPASSES_INVULNERABILITY)))
+                                .and(InvertedLootItemCondition.invert(
+                                        LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
+                                                .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(Enchiridion.EntityTypeTags.IGNORES_BARDING)))))))
+                .withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(1.0F)),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.isNot(DamageTypeTags.BYPASSES_INVULNERABILITY)))
                                 .and(InvertedLootItemCondition.invert(
                                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
