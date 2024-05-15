@@ -9,6 +9,7 @@
     "BowItemMixin",
     "CreativeModeTabsAccessor",
     "CrossbowItemMixin",
+    "EnchantCommandMixin",
     "EnchantmentHelperMixin",
     "EnchantmentMenuMixin",
     "EntityMixin",

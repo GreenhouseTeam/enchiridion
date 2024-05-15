@@ -24,6 +24,7 @@ import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -92,7 +93,11 @@ public class EnchiridionEnchantments {
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.isNot(DamageTypeTags.BYPASSES_INVULNERABILITY)))
                                 .and(InvertedLootItemCondition.invert(
                                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
-                                                .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(Enchiridion.EntityTypeTags.IGNORES_BARDING)))))))
+                                                .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(Enchiridion.EntityTypeTags.IGNORES_BARDING))))
+                                                .or(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
+                                                        .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(EntityType.PLAYER)))))))
+                                .and(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
+                                        .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(EntityType.PLAYER))))))
                 .withEffect(EnchantmentEffectComponents.TICK, new RidingEntityEffect(RidingEntityEffect.Target.VEHICLE, new SpawnParticlesEffect(ParticleTypes.END_ROD, SpawnParticlesEffect.inBoundingBox(), SpawnParticlesEffect.inBoundingBox(), SpawnParticlesEffect.fixedVelocity(UniformFloat.of(-0.1F, 0.1F)), SpawnParticlesEffect.fixedVelocity(UniformFloat.of(-0.1F, 0.1F)), ConstantFloat.of(1.0F))),
                         LootItemEntityPropertyCondition.hasProperties(
                                 LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
