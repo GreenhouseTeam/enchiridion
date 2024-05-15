@@ -28,16 +28,6 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         super(menu, inventory, title);
     }
 
-    @ModifyVariable(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EnchantmentNames;getRandomName(Lnet/minecraft/client/gui/Font;I)Lnet/minecraft/network/chat/FormattedText;"), ordinal = 4)
-    private int enchiridion$disableCheckIfNotEnoughLapisForLevelling(int original, @Local(ordinal = 5) int i) {
-        if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) != -1) {
-            Holder<Enchantment> enchantment = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(menu.enchantClue[i]);
-            if (enchantment != null && enchantment.isBound() && original < EnchantingTableUtil.getLapisCountForLevelling(menu.levelClue[i], enchantment.value().getMaxLevel()))
-                return Integer.MIN_VALUE;
-        }
-        return original;
-    }
-
     @ModifyExpressionValue(method = "renderBg", at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/LocalPlayer;experienceLevel:I"))
     private int enchiridion$disableIfBookshelfCountIsntValid(int original, @Local(ordinal = 5) int i) {
         if (((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getRequiredBookshelves(i) - ((UpgradeableEnchantmentMenuAccess)menu).enchiridion$getBookshelfCount(i) > 0)
