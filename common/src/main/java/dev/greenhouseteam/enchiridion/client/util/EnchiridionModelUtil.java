@@ -15,6 +15,7 @@ import java.util.function.Function;
 public class EnchiridionModelUtil {
     public static final ResourceLocation ENCHANTED_BOOK_COLORED = Enchiridion.asResource("enchiridion/enchanted_book_colored");
     public static final ResourceLocation ENCHANTED_BOOK_MISC = Enchiridion.asResource("enchiridion/enchanted_book_misc");
+    public static final ResourceLocation ENCHANTED_BOOK_RED = Enchiridion.asResource("enchiridion/enchanted_book_curse");
 
     public static List<ResourceLocation> getEnchiridionModels(ResourceManager manager) {
         List<ResourceLocation> modelList = new ArrayList<>();

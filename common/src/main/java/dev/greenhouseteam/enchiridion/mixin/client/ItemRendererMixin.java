@@ -39,8 +39,8 @@ public class ItemRendererMixin {
             return model;
 
         ItemEnchantments storedEnchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-        if (!((ItemEnchantmentsAccessor)storedEnchantments).enchiridion$shouldShowInTooltip())
-            return ((ModelManagerAccessor)this.itemModelShaper.getModelManager()).enchiridion$getBakedRegistry().get(EnchiridionModelUtil.ENCHANTED_BOOK_MISC);
+        if (!((ItemEnchantmentsAccessor)storedEnchantments).enchiridion$shouldShowInTooltip() || storedEnchantments.isEmpty())
+            return ((ModelManagerAccessor)this.itemModelShaper.getModelManager()).enchiridion$getBakedRegistry().get(EnchiridionModelUtil.ENCHANTED_BOOK_RED);
 
         Holder<EnchantmentCategory> first = EnchiridionUtil.getFirstEnchantmentCategory(level.registryAccess(), stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY), stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY));
 
