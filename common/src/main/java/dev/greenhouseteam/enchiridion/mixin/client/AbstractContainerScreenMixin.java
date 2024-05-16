@@ -16,4 +16,10 @@ public class AbstractContainerScreenMixin {
         if ((ContainerEventHandler)(Object)this instanceof EnchantmentScreen enchantmentScreen)
             EnchantingTableScreenUtil.dragScroller(enchantmentScreen, y);
     }
+
+    @Inject(method = "mouseReleased", at = @At("HEAD"))
+    private void enchiridion$resetDragging(double x, double y, int i, CallbackInfoReturnable<Boolean> cir) {
+        if ((ContainerEventHandler)(Object)this instanceof EnchantmentScreen enchantmentScreen)
+            EnchantingTableScreenUtil.setDragging(false);
+    }
 }

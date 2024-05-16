@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.access.LevelUpEnchantmentMenuAccess;
@@ -22,7 +23,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -35,6 +38,8 @@ import java.util.Optional;
 
 @Mixin(EnchantmentScreen.class)
 public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<EnchantmentMenu> {
+    @Shadow @Final private static ResourceLocation ENCHANTMENT_SLOT_SPRITE;
+
     public EnchantmentScreenMixin(EnchantmentMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
     }
@@ -131,12 +136,20 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         }
         return original;
     }
-    @Inject(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EnchantmentScreen;renderBook(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+
+    @ModifyArg(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Ljava/lang/String;III)I"), index = 2)
+    private int enchiridion$slightlyPositionToTheLeft(int x) {
+        if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 0)
+            return x - 4;
+        return x;
+    }
+
+    @Inject(method = "renderBg", at = @At("TAIL"))
     private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, float tickDelta, int mouseX, int mouseY, CallbackInfo ci) {
         if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 0) {
             int x = (this.width - this.imageWidth) / 2;
             int y = (this.height - this.imageHeight) / 2;
-            graphics.blitSprite(EnchantingTableScreenUtil.SCROLLER_BACKGROUND_SPRITE, x + 55, y + 13, 0, 6, 59);
+            graphics.blitSprite(EnchantingTableScreenUtil.SCROLLER_BACKGROUND_SPRITE, x + 164, y + 13, 0, 6, 59);
         }
     }
 
@@ -146,16 +159,58 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
             EnchantingTableScreenUtil.renderScroller(graphics, (this.width - this.imageWidth) / 2, (this.height - this.imageHeight) / 2, ((LevelUpEnchantmentMenuAccess) menu).enchiridion$getEnchantmentSize(), ((LevelUpEnchantmentMenuAccess) menu).enchiridion$getScrollOffset());
     }
 
-    @Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;mouseClicked(DDI)Z"))
+    @Inject(method = "mouseClicked", at = @At(value = "HEAD", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;mouseClicked(DDI)Z"), cancellable = true)
     private void enchiridion$handleDragging(double x, double y, int i, CallbackInfoReturnable<Boolean> cir) {
         EnchantingTableScreenUtil.setDragging(false);
         int originX = (this.width - this.imageWidth) / 2;
         int originY = (this.height - this.imageHeight) / 2;
         if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 3
-                && x > (double)(originX + 56)
-                && x < (double)(originX + 56 + 4)
+                && x > (double)(originX + 165)
+                && x < (double)(originX + 165 + 4)
                 && y > (double)(originY + 14)
-                && y <= (double)(originY + 14 + 56))
+                && y <= (double)(originY + 14 + 56)) {
             EnchantingTableScreenUtil.setDragging(true);
+            cir.setReturnValue(true);
+        }
+    }
+
+    @WrapWithCondition(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V", ordinal = 3))
+    private boolean enchiridion$dontHighlightWhenScrolling(GuiGraphics instance, ResourceLocation resourceLocation, int i, int j, int k, int l, @Local(argsOnly = true, ordinal = 0) int x, @Local(argsOnly = true, ordinal = 1) int y) {
+        int originX = (this.width - this.imageWidth) / 2;
+        int originY = (this.height - this.imageHeight) / 2;
+        boolean bl = ((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 3
+                && x > (double)(originX + 165)
+                && x < (double)(originX + 165 + 4)
+                && y > (double)(originY + 14)
+                && y <= (double)(originY + 14 + 56) || EnchantingTableScreenUtil.isDragging();
+        if (bl) {
+            instance.blitSprite(ENCHANTMENT_SLOT_SPRITE, i, j, k, l);
+        }
+        return !bl;
+    }
+
+    @ModifyVariable(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V", ordinal = 5), ordinal = 10)
+    private int enchiridion$dontHighlightTextWhenScrolling(int original, @Local(argsOnly = true, ordinal = 0) int x, @Local(argsOnly = true, ordinal = 1) int y) {
+        int originX = (this.width - this.imageWidth) / 2;
+        int originY = (this.height - this.imageHeight) / 2;
+        if (original == 16777088 && (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 3
+                && x > (double)(originX + 165)
+                && x < (double)(originX + 165 + 4)
+                && y > (double)(originY + 14)
+                && y <= (double)(originY + 14 + 56) || EnchantingTableScreenUtil.isDragging())) {
+            return 6839882;
+        }
+        return original;
+    }
+
+    @ModifyExpressionValue(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EnchantmentScreen;isHovering(IIIIDD)Z"))
+    private boolean enchiridion$dontRenderEnchantmentTooltipWhenScrolling(boolean original, @Local(argsOnly = true, ordinal = 0) int x, @Local(argsOnly = true, ordinal = 1) int y) {
+        int originX = (this.width - this.imageWidth) / 2;
+        int originY = (this.height - this.imageHeight) / 2;
+        return original && (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() < 1 ||
+                !(x > (double)(originX + 165)
+                && x < (double)(originX + 165 + 4)
+                && y > (double)(originY + 14)
+                && y <= (double)(originY + 14 + 56)) && !EnchantingTableScreenUtil.isDragging());
     }
 }
