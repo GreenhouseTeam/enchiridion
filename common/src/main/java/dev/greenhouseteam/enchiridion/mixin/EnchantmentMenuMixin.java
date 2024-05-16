@@ -168,10 +168,11 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                 }
                 enchiridion$bookshelfCount.set(i);
                 enchiridion$levelableEnchantmentSize.set(size);
-                if (size > 3 && scrollOffset > size - 3) {
+                if (scrollOffset > 0 && scrollOffset > size - 3) {
                     enchiridion$scrollOff = size - 3;
                     if (enchiridion$player instanceof ServerPlayer serverPlayer)
                         Enchiridion.getHelper().sendClientbound(serverPlayer, new SyncEnchantScrollIndexClientboundPacket(Mth.floor(enchiridion$scrollOff)));
+                    enchiridion$refreshEnchantmentIndexes();
                 }
             });
             this.broadcastChanges();
