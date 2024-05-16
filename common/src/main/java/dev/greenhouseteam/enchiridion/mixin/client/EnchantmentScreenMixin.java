@@ -133,7 +133,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
     }
     @Inject(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EnchantmentScreen;renderBook(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
     private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, float tickDelta, int mouseX, int mouseY, CallbackInfo ci) {
-        if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() != -1) {
+        if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 0) {
             int x = (this.width - this.imageWidth) / 2;
             int y = (this.height - this.imageHeight) / 2;
             graphics.blitSprite(EnchantingTableScreenUtil.SCROLLER_BACKGROUND_SPRITE, x + 55, y + 13, 0, 6, 59);
