@@ -14,6 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +38,11 @@ import java.util.function.Consumer;
 public abstract class EnchantmentHelperMixin {
     @Shadow
     protected static void runIterationOnEquipment(LivingEntity $$0, EnchantmentHelper.EnchantmentInSlotVisitor $$1) {
+    }
+
+    @ModifyReturnValue(method = "getEnchantmentCost", at = @At("RETURN"))
+    private static int enchiridion$modifyEnchantmentCost(int original) {
+        return Math.max(1, Mth.floor((float) original * 0.5F));
     }
 
     @ModifyReturnValue(method = "updateEnchantments", at = @At("RETURN"))
