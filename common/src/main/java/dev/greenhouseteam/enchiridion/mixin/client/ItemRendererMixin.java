@@ -9,6 +9,8 @@ import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
 import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
 import dev.greenhouseteam.enchiridion.mixin.ItemEnchantmentsAccessor;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentCategories;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -39,7 +41,7 @@ public class ItemRendererMixin {
             return model;
 
         ItemEnchantments storedEnchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-        if (!((ItemEnchantmentsAccessor)storedEnchantments).enchiridion$shouldShowInTooltip() || storedEnchantments.isEmpty())
+        if (!((ItemEnchantmentsAccessor)storedEnchantments).enchiridion$shouldShowInTooltip() || storedEnchantments.isEmpty() || level.registryAccess().registryOrThrow(EnchiridionRegistries.ENCHANTMENT_CATEGORY).holders().filter(category -> category.isBound() && !category.is(EnchiridionEnchantmentCategories.CURSE)).noneMatch(category -> category.value().acceptedEnchantments().stream().findAny().isPresent()))
             return ((ModelManagerAccessor)this.itemModelShaper.getModelManager()).enchiridion$getBakedRegistry().get(EnchiridionModelUtil.ENCHANTED_BOOK_RED);
 
         Holder<EnchantmentCategory> first = EnchiridionUtil.getFirstEnchantmentCategory(level.registryAccess(), stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY), stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY));
