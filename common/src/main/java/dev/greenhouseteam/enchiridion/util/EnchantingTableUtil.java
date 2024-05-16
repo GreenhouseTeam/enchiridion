@@ -6,7 +6,7 @@ import net.minecraft.util.RandomSource;
 public class EnchantingTableUtil {
 
     public static int getLevelUpCost(RandomSource random, int level, int maxLevel) {
-        return Math.clamp(Mth.floor(((float)level / (float)maxLevel) * 18.0F) + Mth.floor((random.nextFloat() * 3.0F) - 1.0F), 1, 25);
+        return Math.clamp(Mth.floor(((float)level / (float)maxLevel) * 19.0F) + Mth.floor((random.nextFloat() * 4.0F) - 2.0F), 1, 25);
     }
 
     public static int getMinimumBookshelfAmountForLevelling(int level, int maxLevel) {
