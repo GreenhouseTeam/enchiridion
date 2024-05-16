@@ -142,7 +142,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
 
     @Inject(method = "render", at = @At(value = "TAIL"))
     private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, int x, int y, float tickDelta, CallbackInfo ci) {
-        if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() != -1)
+        if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 0)
             EnchantingTableScreenUtil.renderScroller(graphics, (this.width - this.imageWidth) / 2, (this.height - this.imageHeight) / 2, ((LevelUpEnchantmentMenuAccess) menu).enchiridion$getEnchantmentSize(), ((LevelUpEnchantmentMenuAccess) menu).enchiridion$getScrollOffset());
     }
 
