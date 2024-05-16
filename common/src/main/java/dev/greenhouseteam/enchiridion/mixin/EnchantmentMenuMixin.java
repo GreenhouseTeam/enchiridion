@@ -192,6 +192,11 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
         }
     }
 
+    @ModifyVariable(method = "getEnchantmentList", at = @At("HEAD"), ordinal = 1, argsOnly = true)
+    private int enchiridion$setEnchantmentLevelToFull(int original) {
+        return Math.max(1, Mth.floor((float) original / 0.5F));
+    }
+
     @ModifyVariable(method = "clickMenuButton", at = @At(value = "LOAD"), ordinal = 1)
     private int enchiridion$modifyLapisCountForLevelUps(int original, Player player, int index, @Local(ordinal = 0) ItemStack stack) {
         if (!stack.isEmpty() && EnchantmentHelper.hasAnyEnchantments(stack)) {
