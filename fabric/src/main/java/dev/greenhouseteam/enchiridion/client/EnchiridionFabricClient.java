@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.client;
 
 import dev.greenhouseteam.enchiridion.client.util.EnchiridionModelUtil;
+import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantScrollIndexClientboundPacket;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
 import dev.greenhouseteam.enchiridion.util.TooltipUtil;
 import net.fabricmc.api.ClientModInitializer;
@@ -27,6 +28,7 @@ public class EnchiridionFabricClient implements ClientModInitializer {
     }
 
     public static void registerPackets() {
+        ClientPlayNetworking.registerGlobalReceiver(SyncEnchantScrollIndexClientboundPacket.TYPE, (payload, context) -> payload.handle());
         ClientPlayNetworking.registerGlobalReceiver(SyncEnchantedFrozenStateClientboundPacket.TYPE, (payload, context) -> payload.handle());
     }
 }

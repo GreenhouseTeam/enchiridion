@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.EnchantmentMenu;
 
 public record SyncEnchantScrollIndexServerboundPacket(int value) implements CustomPacketPayload {
-    public static final ResourceLocation ID = Enchiridion.asResource("sync_enchant_scroll_index");
+    public static final ResourceLocation ID = Enchiridion.asResource("sync_enchant_scroll_index_serverbound");
     public static final Type<SyncEnchantScrollIndexServerboundPacket> TYPE = new Type<>(ID);
 
     public static final StreamCodec<FriendlyByteBuf, SyncEnchantScrollIndexServerboundPacket> STREAM_CODEC = CustomPacketPayload.codec(
