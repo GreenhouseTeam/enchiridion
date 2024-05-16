@@ -8,6 +8,7 @@ import dev.greenhouseteam.enchiridion.mixin.fabric.LootPoolAccessor;
 import dev.greenhouseteam.enchiridion.mixin.fabric.LootTableBuilderAccessor;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantScrollIndexClientboundPacket;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
+import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantmentLevelUpSeedsPacket;
 import dev.greenhouseteam.enchiridion.network.serverbound.SyncEnchantScrollIndexServerboundPacket;
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelperFabric;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
@@ -150,6 +151,7 @@ public class EnchiridionFabric implements ModInitializer {
     public static void registerPackets() {
         PayloadTypeRegistry.playS2C().register(SyncEnchantScrollIndexClientboundPacket.TYPE, SyncEnchantScrollIndexClientboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncEnchantedFrozenStateClientboundPacket.TYPE, SyncEnchantedFrozenStateClientboundPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(SyncEnchantmentLevelUpSeedsPacket.TYPE, SyncEnchantmentLevelUpSeedsPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SyncEnchantScrollIndexServerboundPacket.TYPE, SyncEnchantScrollIndexServerboundPacket.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(SyncEnchantScrollIndexServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));

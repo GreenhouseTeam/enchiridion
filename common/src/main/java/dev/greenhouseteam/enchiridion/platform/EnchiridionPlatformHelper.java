@@ -32,6 +32,14 @@ public interface EnchiridionPlatformHelper {
 
     void setFrozenByEnchantment(Entity entity, boolean value);
 
+    boolean containsEnchantmentSeed(Player player, int index);
+
+    int getEnchantmentSeed(Player player, int index);
+
+    void addEnchantmentSeed(Player player, int index, int seed);
+
+    void clearEnchantmentSeeds(Player player);
+
     boolean isFrozenByEnchantment(Entity entity);
 
     boolean isClientThread();

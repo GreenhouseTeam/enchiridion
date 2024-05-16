@@ -13,12 +13,14 @@ import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.EnchantmentNames;
 import net.minecraft.client.gui.screens.inventory.EnchantmentScreen;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
@@ -42,6 +44,13 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
 
     public EnchantmentScreenMixin(EnchantmentMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+    }
+
+    @Inject(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EnchantmentNames;getRandomName(Lnet/minecraft/client/gui/Font;I)Lnet/minecraft/network/chat/FormattedText;"))
+    private void enchiridion$setSeedForNameRandomisation(GuiGraphics graphics, float partialTicks, int x, int y, CallbackInfo ci, @Local(ordinal = 5) int i) {
+        int index = Mth.floor(((LevelUpEnchantmentMenuAccess) menu).enchiridion$getScrollOffset()) + i;
+        if (index > 0)
+            EnchantmentNames.getInstance().initSeed(Enchiridion.getHelper().getEnchantmentSeed(minecraft.player, index - 1));
     }
 
     @ModifyExpressionValue(method = "renderBg", at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/LocalPlayer;experienceLevel:I"))
@@ -145,7 +154,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
     }
 
     @Inject(method = "renderBg", at = @At("TAIL"))
-    private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, float tickDelta, int mouseX, int mouseY, CallbackInfo ci) {
+    private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
         if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 0) {
             int x = (this.width - this.imageWidth) / 2;
             int y = (this.height - this.imageHeight) / 2;
@@ -154,7 +163,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
     }
 
     @Inject(method = "render", at = @At(value = "TAIL"))
-    private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, int x, int y, float tickDelta, CallbackInfo ci) {
+    private void enchiridion$renderLevelUpScrollBar(GuiGraphics graphics, int x, int y, float partialTicks, CallbackInfo ci) {
         if (((LevelUpEnchantmentMenuAccess)menu).enchiridion$getEnchantmentSize() > 0)
             EnchantingTableScreenUtil.renderScroller(graphics, (this.width - this.imageWidth) / 2, (this.height - this.imageHeight) / 2, ((LevelUpEnchantmentMenuAccess) menu).enchiridion$getEnchantmentSize(), ((LevelUpEnchantmentMenuAccess) menu).enchiridion$getScrollOffset());
     }

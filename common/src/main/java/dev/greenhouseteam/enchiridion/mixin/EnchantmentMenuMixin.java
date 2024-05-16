@@ -92,20 +92,17 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
     @Unique
     private Player enchiridion$player;
 
-    @Unique
-    private List<Long> enchiridion$seeds;
-
     protected EnchantmentMenuMixin(@Nullable MenuType<?> menuType, int containerId) {
         super(menuType, containerId);
     }
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("TAIL"))
     private void enchiridion$addDataSlotsToEnchantingTableMenu(int containerId, Inventory inventory, ContainerLevelAccess level, CallbackInfo ci) {
-        this.addDataSlot(enchiridion$levelableEnchantmentSize).set(-1);
-        this.addDataSlot(enchiridion$bookshelfCount).set(-1);
-        this.addDataSlot(DataSlot.shared(enchiridion$requiredBookshelves, 0));
-        this.addDataSlot(DataSlot.shared(enchiridion$requiredBookshelves, 1));
-        this.addDataSlot(DataSlot.shared(enchiridion$requiredBookshelves, 2));
+        addDataSlot(enchiridion$levelableEnchantmentSize).set(-1);
+        addDataSlot(enchiridion$bookshelfCount).set(-1);
+        addDataSlot(DataSlot.shared(enchiridion$requiredBookshelves, 0));
+        addDataSlot(DataSlot.shared(enchiridion$requiredBookshelves, 1));
+        addDataSlot(DataSlot.shared(enchiridion$requiredBookshelves, 2));
 
         enchiridion$player = inventory.player;
     }
@@ -121,6 +118,7 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                 List<Object2IntMap.Entry<Holder<Enchantment>>> enchantmentSet = new ArrayList<>(stack.getEnchantments().entrySet().stream().toList());
                 if (enchantmentSet.isEmpty())
                     enchantmentSet = new ArrayList<>(stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet().stream().toList());
+                enchantmentSet = new ArrayList<>(enchantmentSet.stream().filter(entry -> entry.getIntValue() < entry.getKey().value().getMaxLevel()).toList());
                 enchantmentSet.sort((o1, o2) -> EnchiridionUtil.compareEnchantments(o1.getKey(), o2.getKey(), stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY)));
 
                 int i = 0;
@@ -131,49 +129,54 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                     }
                 }
 
-                this.random.setSeed(enchantmentSeed.get());
-
-                int j;
-                for (j = 0; j < 3; ++j) {
-                    this.costs[j] = 0;
-                    this.enchantClue[j] = -1;
-                    this.levelClue[j] = -1;
-                    enchiridion$requiredBookshelves[j] = -1;
-                }
-
-                int scrollOffset =  Mth.floor(enchiridion$scrollOff);
-                j = 0;
-                int size = 0;
-                for (int k = 0; k < enchantmentSet.size(); ++k) {
-                    Object2IntMap.Entry<Holder<Enchantment>> enchantment = enchantmentSet.get(k);
-                    int maxLevel = enchantment.getKey().value().getMaxLevel();
-                    if (enchantment.getIntValue() < maxLevel) {
-                        int cost = EnchantingTableUtil.getLevelUpCost(enchantment.getIntValue() + 1, maxLevel);
-                        int enchantClue = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getId(enchantment.getKey().value());
-                        int levelClue = enchantment.getIntValue() + 1;
-                        int bookshelfCount = EnchantingTableUtil.getMinimumBookshelfAmountForLevelling(enchantment.getIntValue() + 1, maxLevel);
-                        enchiridion$allLevelUpCosts.add(cost);
-                        enchiridion$allEnchantClues.add(enchantClue);
-                        enchiridion$allLevelClues.add(levelClue);
-                        enchiridion$allRequiredBookshelves.add(levelClue);
-                        ++size;
-                        if (j < 3 && k > scrollOffset - 1) {
-                            this.costs[j] = cost;
-                            this.enchantClue[j] = enchantClue;
-                            this.levelClue[j] = levelClue;
-                            enchiridion$requiredBookshelves[j] = bookshelfCount;
-                            ++j;
-                        }
-                    }
-                }
-                enchiridion$bookshelfCount.set(i);
-                enchiridion$levelableEnchantmentSize.set(size);
+                int scrollOffset = Mth.floor(enchiridion$scrollOff);
+                int size = enchantmentSet.size();
                 if (scrollOffset > 0 && scrollOffset > size - 3) {
                     enchiridion$scrollOff = size - 3;
                     if (enchiridion$player instanceof ServerPlayer serverPlayer)
                         Enchiridion.getHelper().sendClientbound(serverPlayer, new SyncEnchantScrollIndexClientboundPacket(Mth.floor(enchiridion$scrollOff)));
-                    enchiridion$refreshEnchantmentIndexes();
                 }
+
+                random.setSeed(enchantmentSeed.get());
+                for (int j = 1; j < size; ++j) {
+                    if (!Enchiridion.getHelper().containsEnchantmentSeed(enchiridion$player, j)) {
+                        int newSeed = level.random.nextInt();
+                        Enchiridion.getHelper().addEnchantmentSeed(enchiridion$player, j - 1, newSeed);
+                    }
+                }
+
+                int k;
+                for (k = 0; k < 3; ++k) {
+                    this.costs[k] = 0;
+                    this.enchantClue[k] = -1;
+                    this.levelClue[k] = -1;
+                    enchiridion$requiredBookshelves[k] = -1;
+                }
+
+                k = 0;
+                for (int l = 0; l < enchantmentSet.size(); ++l) {
+                    if (l > 0)
+                        random.setSeed(Enchiridion.getHelper().getEnchantmentSeed(enchiridion$player, l - 1));
+                    Object2IntMap.Entry<Holder<Enchantment>> enchantment = enchantmentSet.get(l);
+                    int maxLevel = enchantment.getKey().value().getMaxLevel();
+                    int cost = EnchantingTableUtil.getLevelUpCost(random, enchantment.getIntValue() + 1, maxLevel);
+                    int enchantClue = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getId(enchantment.getKey().value());
+                    int levelClue = enchantment.getIntValue() + 1;
+                    int bookshelfCount = EnchantingTableUtil.getMinimumBookshelfAmountForLevelling(enchantment.getIntValue() + 1, maxLevel);
+                    enchiridion$allLevelUpCosts.add(cost);
+                    enchiridion$allEnchantClues.add(enchantClue);
+                    enchiridion$allLevelClues.add(levelClue);
+                    enchiridion$allRequiredBookshelves.add(levelClue);
+                    if (k < 3 && l > Mth.floor(enchiridion$scrollOff) - 1) {
+                        this.costs[k] = cost;
+                        this.enchantClue[k] = enchantClue;
+                        this.levelClue[k] = levelClue;
+                        enchiridion$requiredBookshelves[k] = bookshelfCount;
+                        ++k;
+                    }
+                }
+                enchiridion$bookshelfCount.set(i);
+                enchiridion$levelableEnchantmentSize.set(size);
             });
             this.broadcastChanges();
             ci.cancel();
@@ -190,7 +193,7 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
     }
 
     @ModifyVariable(method = "clickMenuButton", at = @At(value = "LOAD"), ordinal = 1)
-    private int enchiridion$allowEnchantmentLevelUps(int original, Player player, int index, @Local(ordinal = 0) ItemStack stack) {
+    private int enchiridion$modifyLapisCountForLevelUps(int original, Player player, int index, @Local(ordinal = 0) ItemStack stack) {
         if (!stack.isEmpty() && EnchantmentHelper.hasAnyEnchantments(stack)) {
             Holder<Enchantment> enchantment = player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(enchantClue[index]);
             if (enchantment != null && enchantment.isBound())
@@ -200,24 +203,26 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
     }
 
     @Inject(method = "clickMenuButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ContainerLevelAccess;execute(Ljava/util/function/BiConsumer;)V"), cancellable = true)
-    private void enchiridion$allowEnchantmentLevelUps(Player player, int index, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) ItemStack stack, @Local(ordinal = 1) ItemStack lapis, @Local(ordinal = 1) int lapisCount) {
+    private void enchiridion$performEnchantmentLevelUps(Player player, int index, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) ItemStack stack, @Local(ordinal = 1) ItemStack lapis, @Local(ordinal = 1) int lapisCount) {
         if (!stack.isEmpty() && EnchantmentHelper.hasAnyEnchantments(stack)) {
             access.execute((level, blockPos) -> {
                 Holder<Enchantment> enchantment = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().byId(enchantClue[index]);
                 if (enchantment != null && enchantment.isBound()) {
+                    if (index + enchiridion$scrollOff > 0)
+                        random.setSeed(Enchiridion.getHelper().getEnchantmentSeed(player, index + Mth.floor(enchiridion$scrollOff) - 1));
+                    else
+                        random.setSeed(enchantmentSeed.get());
 
-                    player.onEnchantmentPerformed(stack, EnchantingTableUtil.getLapisCountForLevelling(levelClue[index], enchantment.value().getMaxLevel()));
                     stack.enchant(enchantment, EnchantingTableUtil.potentiallyAddExtraLevel(random, levelClue[index], enchantment.value().getMaxLevel(), stack.getItem().getEnchantmentValue()));
+                    player.onEnchantmentPerformed(stack, EnchantingTableUtil.getLapisCountForLevelling(levelClue[index], enchantment.value().getMaxLevel()));
 
                     lapis.consume(lapisCount, player);
-                    if (lapis.isEmpty()) {
+                    if (lapis.isEmpty())
                         this.enchantSlots.setItem(1, ItemStack.EMPTY);
-                    }
 
                     player.awardStat(Stats.ENCHANT_ITEM);
-                    if (player instanceof ServerPlayer serverPlayer) {
+                    if (player instanceof ServerPlayer serverPlayer)
                         CriteriaTriggers.ENCHANTED_ITEM.trigger(serverPlayer, stack, lapisCount);
-                    }
 
                     enchantSlots.setChanged();
                     enchantmentSeed.set(player.getEnchantmentSeed());
@@ -227,9 +232,8 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                     this.broadcastChanges();
 
                     cir.setReturnValue(true);
-                } else {
+                } else
                     cir.setReturnValue(false);
-                }
             });
         }
     }

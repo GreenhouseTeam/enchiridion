@@ -2,18 +2,22 @@ package dev.greenhouseteam.enchiridion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.access.PlayerTargetAccess;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,5 +62,10 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerTargetAc
 
         if (enchiridion$activeBlockTargetEnchantmentEffects.get(enchantment).isEmpty())
             enchiridion$activeBlockTargetEnchantmentEffects.remove(enchantment);
+    }
+
+    @Inject(method = "onEnchantmentPerformed", at = @At("TAIL"))
+    private void enchiridion$clearEnchantments(ItemStack stack, int cost, CallbackInfo ci) {
+        Enchiridion.getHelper().clearEnchantmentSeeds((Player)(Object)this);
     }
 }
