@@ -11,7 +11,7 @@
   "enchiridion.category.enchiridion.tertiary": "Tertiary",
   "enchiridion.category.enchiridion.curse": "Curse",
 
-  "container.enchiridion.enchant.level_up": "Level Up: %s \u2192 %s",
+  "container.enchiridion.enchant.level_up": "Level Up: %s \u2192 %s . . . ?",
   "container.enchiridion.enchant.bookshelf.requirement": "Bookshelf Requirement: %s",
   "container.enchiridion.enchant.bookshelves.one": "1 Bookshelf",
   "container.enchiridion.enchant.bookshelves.many": "%s Bookshelves",

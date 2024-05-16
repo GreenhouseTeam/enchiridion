@@ -148,7 +148,7 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                     Object2IntMap.Entry<Holder<Enchantment>> enchantment = enchantmentSet.get(k);
                     int maxLevel = enchantment.getKey().value().getMaxLevel();
                     if (enchantment.getIntValue() < maxLevel) {
-                        int cost = EnchantingTableUtil.getLevelUpCost(enchantment.getIntValue() + 1, maxLevel, stack);
+                        int cost = EnchantingTableUtil.getLevelUpCost(enchantment.getIntValue() + 1, maxLevel);
                         int enchantClue = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getId(enchantment.getKey().value());
                         int levelClue = enchantment.getIntValue() + 1;
                         int bookshelfCount = EnchantingTableUtil.getMinimumBookshelfAmountForLevelling(enchantment.getIntValue() + 1, maxLevel);
@@ -207,7 +207,7 @@ public abstract class EnchantmentMenuMixin  extends AbstractContainerMenu implem
                 if (enchantment != null && enchantment.isBound()) {
 
                     player.onEnchantmentPerformed(stack, EnchantingTableUtil.getLapisCountForLevelling(levelClue[index], enchantment.value().getMaxLevel()));
-                    stack.enchant(enchantment, levelClue[index]);
+                    stack.enchant(enchantment, EnchantingTableUtil.potentiallyAddExtraLevel(random, levelClue[index], enchantment.value().getMaxLevel(), stack.getItem().getEnchantmentValue()));
 
                     lapis.consume(lapisCount, player);
                     if (lapis.isEmpty()) {
