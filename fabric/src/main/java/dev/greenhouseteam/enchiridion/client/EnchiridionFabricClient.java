@@ -31,6 +31,6 @@ public class EnchiridionFabricClient implements ClientModInitializer {
     public static void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(SyncEnchantScrollIndexClientboundPacket.TYPE, (payload, context) -> payload.handle());
         ClientPlayNetworking.registerGlobalReceiver(SyncEnchantedFrozenStateClientboundPacket.TYPE, (payload, context) -> payload.handle());
-            ClientPlayNetworking.registerGlobalReceiver(SyncEnchantmentLevelUpSeedsPacket.TYPE, (payload, context) -> payload.handle());
+        ClientPlayNetworking.registerGlobalReceiver(SyncEnchantmentLevelUpSeedsPacket.TYPE, (payload, context) -> payload.handle());
     }
 }
