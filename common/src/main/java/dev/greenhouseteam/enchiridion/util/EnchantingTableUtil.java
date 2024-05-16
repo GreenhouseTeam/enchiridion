@@ -18,7 +18,7 @@ public class EnchantingTableUtil {
     }
 
     public static int potentiallyAddExtraLevel(RandomSource random, int level, int maxLevel, int enchantmentValue) {
-        float chance = (float)enchantmentValue / 120.0F;
+        float chance = ((float)enchantmentValue / 120.0F) + (((float) level - 1 / (float)maxLevel) / 40.0F);
         return Math.min(level + (random.nextFloat() < chance ? 1 : 0), maxLevel);
     }
 }
