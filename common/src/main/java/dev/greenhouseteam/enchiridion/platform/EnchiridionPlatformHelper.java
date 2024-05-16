@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.platform;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
@@ -24,6 +25,10 @@ public interface EnchiridionPlatformHelper {
     RegistryAccess getReqistryAccess();
 
     boolean isLoaderResourcePack(Resource resource);
+
+    void sendClientbound(ServerPlayer player, CustomPacketPayload payload);
+
+    void sendServerbound(CustomPacketPayload payload);
 
     void setFrozenByEnchantment(Entity entity, boolean value);
 

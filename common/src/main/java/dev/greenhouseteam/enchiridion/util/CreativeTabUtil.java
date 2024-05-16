@@ -55,7 +55,7 @@ public class CreativeTabUtil {
                     return Integer.compare(enchantment.getSecond(), enchantment2.getSecond());
 
                 if (o1CategoryPriority == o2CategoryPriority && enchantment != null && enchantment2 != null)
-                    return compareEnchantments(enchantment.getFirst(), enchantment2.getFirst());
+                    return EnchiridionUtil.compareEnchantmentNames(enchantment.getFirst(), enchantment2.getFirst());
 
                 // We flip the typical comparison, so we can get higher priority to come first.
                 return Integer.compare(o2CategoryPriority, o1CategoryPriority);
@@ -64,24 +64,5 @@ public class CreativeTabUtil {
             for (int i = 0; i < intList.size(); ++i)
                 stacks.set(intList.get(i), stackList.get(i));
         }
-    }
-
-    private static int compareEnchantments(Holder<Enchantment> enchantment, Holder<Enchantment> enchantment2) {
-        if (
-            // Prioritise the Minecraft namespace.
-            enchantment.unwrapKey().isPresent() && enchantment.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) &&
-                    enchantment2.unwrapKey().isPresent() && !enchantment2.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)
-        ) {
-            return -1;
-        } else if (
-            // Prioritise the Minecraft namespace.
-            enchantment.unwrapKey().isPresent() && !enchantment.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) &&
-                    enchantment2.unwrapKey().isPresent() && enchantment2.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)
-        ) {
-            return 1;
-        }
-        if (enchantment.unwrapKey().isPresent() && enchantment2.unwrapKey().isPresent())
-            return enchantment.unwrapKey().get().location().compareTo(enchantment2.unwrapKey().get().location());
-        return Integer.compare(enchantment.hashCode(), enchantment2.hashCode());
     }
 }

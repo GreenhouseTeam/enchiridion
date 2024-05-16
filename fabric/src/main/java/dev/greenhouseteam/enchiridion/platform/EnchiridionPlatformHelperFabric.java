@@ -4,21 +4,17 @@ import dev.greenhouseteam.enchiridion.EnchiridionFabric;
 import dev.greenhouseteam.enchiridion.mixin.fabric.client.MinecraftAccessor;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionAttachments;
-import net.fabricmc.fabric.api.lookup.v1.entity.EntityApiLookup;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.entity.EntityLookup;
-
-import java.util.Collection;
-import java.util.Set;
 
 public class EnchiridionPlatformHelperFabric implements EnchiridionPlatformHelper {
 
@@ -47,6 +43,16 @@ public class EnchiridionPlatformHelperFabric implements EnchiridionPlatformHelpe
     @Override
     public boolean isLoaderResourcePack(Resource resource) {
         return resource.source().location().title().contains(Component.translatable("pack.name.fabricMod"));
+    }
+
+    @Override
+    public void sendClientbound(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload);
+    }
+
+    @Override
+    public void sendServerbound(CustomPacketPayload payload) {
+        ClientPlayNetworking.send(payload);
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class EnchantingTableUtil {
+
     public static int getLevelUpCost(int level, int maxLevel, ItemStack stack) {
         Item item = stack.getItem();
         int enchantmentValue = item.getEnchantmentValue();

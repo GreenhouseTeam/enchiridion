@@ -19,6 +19,9 @@
     "ProjectileWeaponItemMixin"
   ],
   "client": [
+    "client.AbstractContainerScreenAccessor",
+    "client.AbstractContainerScreenMixin",
+    "client.ContainerEventHandlerMixin",
     "client.EnchantmentScreenMixin",
     "client.ItemRendererMixin",
     "client.LivingEntityMixin",

@@ -3,12 +3,14 @@ package dev.greenhouseteam.enchiridion.util;
 import com.mojang.datafixers.util.Pair;
 import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
 import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -100,5 +102,50 @@ public class EnchiridionUtil {
         if (enchantments.isEmpty())
             enchantments = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         return enchantments;
+    }
+
+    public static int compareEnchantments(Holder<Enchantment> enchantment, Holder<Enchantment> enchantment2, ItemEnchantmentCategories categories) {
+        if (!enchantment.isBound() && !enchantment2.isBound())
+            return 0;
+        if (!enchantment.isBound() && enchantment2.isBound())
+            return -1;
+        if (enchantment.isBound() && !enchantment2.isBound())
+            return 1;
+
+        int o1CategoryPriority = Optional.ofNullable(categories.findFirstCategory(enchantment)).map(category -> {
+            if (!category.isBound())
+                return Integer.MIN_VALUE;
+            return category.value().priority();
+        }).orElse(0);
+        int o2CategoryPriority = Optional.ofNullable(categories.findFirstCategory(enchantment2)).map(category -> {
+            if (!category.isBound())
+                return Integer.MIN_VALUE;
+            return category.value().priority();
+        }).orElse(0);
+
+        if (o1CategoryPriority == o2CategoryPriority)
+            return compareEnchantmentNames(enchantment, enchantment2);
+
+        // We flip the typical comparison, so we can get higher priority to come first.
+        return Integer.compare(o2CategoryPriority, o1CategoryPriority);
+    }
+
+    public static int compareEnchantmentNames(Holder<Enchantment> enchantment, Holder<Enchantment> enchantment2) {
+        if (
+            // Prioritise the Minecraft namespace.
+                enchantment.unwrapKey().isPresent() && enchantment.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) &&
+                        enchantment2.unwrapKey().isPresent() && !enchantment2.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)
+        ) {
+            return -1;
+        } else if (
+            // Prioritise the Minecraft namespace.
+                enchantment.unwrapKey().isPresent() && !enchantment.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) &&
+                        enchantment2.unwrapKey().isPresent() && enchantment2.unwrapKey().get().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)
+        ) {
+            return 1;
+        }
+        if (enchantment.unwrapKey().isPresent() && enchantment2.unwrapKey().isPresent())
+            return enchantment.unwrapKey().get().location().compareTo(enchantment2.unwrapKey().get().location());
+        return Integer.compare(enchantment.hashCode(), enchantment2.hashCode());
     }
 }
