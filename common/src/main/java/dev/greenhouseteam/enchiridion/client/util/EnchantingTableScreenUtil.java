@@ -27,11 +27,11 @@ public class EnchantingTableScreenUtil {
     public static void renderScroller(GuiGraphics graphics, int x, int y, int enchantmentSize, double scrollOffset) {
         int size = enchantmentSize + 1 - 3;
         if (size > 1) {
-            int maximum = 165 - (12 + (size - 1) * 165 / size);
-            int multiplier = 1 + maximum / size + 165 / size;
+            int maximum = 56 - (12 + (size - 1) * 56 / size);
+            int multiplier = 1 + maximum / size + 56 / size;
             int clamped = Math.min(43, Mth.floor(scrollOffset)) * multiplier;
             if ((int)scrollOffset == size - 1)
-                clamped = 43;
+                clamped = 42;
 
             graphics.blitSprite(SCROLLER_SPRITE, x + 165, y + 14 + clamped, 0, 4, 14);
         } else
