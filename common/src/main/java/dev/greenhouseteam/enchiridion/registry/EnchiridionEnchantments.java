@@ -7,10 +7,13 @@ import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumpti
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingTarget;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.EntityTypePredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.MobEffectsPredicate;
 import net.minecraft.advancements.critereon.TagPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -26,6 +29,7 @@ import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -42,12 +46,14 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.Ignite;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class EnchiridionEnchantments {
@@ -112,12 +118,39 @@ public class EnchiridionEnchantments {
         Enchantment crumble = Enchantment.enchantment(
                 Enchantment.definition(pickaxeEnchantable, 2, 1, Enchantment.constantCost(15), Enchantment.constantCost(65), 4, EquipmentSlotGroup.MAINHAND)
                 ).exclusiveWith(miningExclusiveSet)
-                .withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.BLOCK_BREAK_SPEED, LevelBasedValue.constant(0.88F), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
-                        LocationCheck.checkLocation(
-                                LocationPredicate.Builder.location()
-                                .setBlock(
-                                        net.minecraft.advancements.critereon.BlockPredicate.Builder.block()
-                                                .of(Enchiridion.BlockTags.BASE_STONE)))
+                .withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.MINING_EFFICIENCY, LevelBasedValue.constant(8.0F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
+                        AllOfCondition.allOf(
+                                LocationCheck.checkLocation(LocationPredicate.Builder.location()
+                                        .setBlock(
+                                                BlockPredicate.Builder.block()
+                                                        .of(Enchiridion.BlockTags.BASE_STONE))),
+                                InvertedLootItemCondition.invert(
+                                        LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
+                                                EntityPredicate.Builder.entity()
+                                                        .effects(MobEffectsPredicate.Builder.effects()
+                                                                .and(MobEffects.DIG_SPEED, new MobEffectsPredicate.MobEffectInstancePredicate())))))
+                ).withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.MINING_EFFICIENCY, LevelBasedValue.constant(16.0F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
+                        AllOfCondition.allOf(
+                                LocationCheck.checkLocation(LocationPredicate.Builder.location()
+                                        .setBlock(
+                                                BlockPredicate.Builder.block()
+                                                        .of(Enchiridion.BlockTags.BASE_STONE))),
+                                LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
+                                        EntityPredicate.Builder.entity()
+                                                .effects(MobEffectsPredicate.Builder.effects()
+                                                        .and(MobEffects.DIG_SPEED, new MobEffectsPredicate.MobEffectInstancePredicate(MinMaxBounds.Ints.exactly(0), MinMaxBounds.Ints.ANY, Optional.empty(), Optional.empty()))))
+                        )
+                ).withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble", Attributes.MINING_EFFICIENCY, LevelBasedValue.constant(32.0F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("031e1965-9647-4271-8bf2-7aecdd20ab09")),
+                        AllOfCondition.allOf(
+                                LocationCheck.checkLocation(LocationPredicate.Builder.location()
+                                        .setBlock(
+                                                BlockPredicate.Builder.block()
+                                                        .of(Enchiridion.BlockTags.BASE_STONE))),
+                                LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
+                                        EntityPredicate.Builder.entity()
+                                                .effects(MobEffectsPredicate.Builder.effects()
+                                                        .and(MobEffects.DIG_SPEED, new MobEffectsPredicate.MobEffectInstancePredicate(MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.ANY, Optional.empty(), Optional.empty()))))
+                        )
                 ).build(CRUMBLE.location());
         Enchantment exhilarating = Enchantment.enchantment(
                 Enchantment.definition(miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)

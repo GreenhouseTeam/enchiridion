@@ -8,19 +8,106 @@
       {
         "effect": {
           "type": "minecraft:attribute",
-          "amount": 0.88,
-          "attribute": "minecraft:player.block_break_speed",
+          "amount": 8.0,
+          "attribute": "minecraft:player.mining_efficiency",
           "name": "enchantment.enchiridion.crumble",
-          "operation": "add_multiplied_total",
+          "operation": "add_value",
           "uuid": "031e1965-9647-4271-8bf2-7aecdd20ab09"
         },
         "requirements": {
-          "condition": "minecraft:location_check",
-          "predicate": {
-            "block": {
-              "blocks": "#enchiridion:base_stone"
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "#enchiridion:base_stone"
+                }
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:entity_properties",
+                "entity": "this",
+                "predicate": {
+                  "effects": {
+                    "minecraft:haste": {}
+                  }
+                }
+              }
             }
-          }
+          ]
+        }
+      },
+      {
+        "effect": {
+          "type": "minecraft:attribute",
+          "amount": 16.0,
+          "attribute": "minecraft:player.mining_efficiency",
+          "name": "enchantment.enchiridion.crumble",
+          "operation": "add_value",
+          "uuid": "031e1965-9647-4271-8bf2-7aecdd20ab09"
+        },
+        "requirements": {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "#enchiridion:base_stone"
+                }
+              }
+            },
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "effects": {
+                  "minecraft:haste": {
+                    "amplifier": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "effect": {
+          "type": "minecraft:attribute",
+          "amount": 32.0,
+          "attribute": "minecraft:player.mining_efficiency",
+          "name": "enchantment.enchiridion.crumble",
+          "operation": "add_value",
+          "uuid": "031e1965-9647-4271-8bf2-7aecdd20ab09"
+        },
+        "requirements": {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "#enchiridion:base_stone"
+                }
+              }
+            },
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "effects": {
+                  "minecraft:haste": {
+                    "amplifier": {
+                      "min": 1
+                    }
+                  }
+                }
+              }
+            }
+          ]
         }
       }
     ]
