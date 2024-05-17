@@ -2,16 +2,10 @@ package dev.greenhouseteam.enchiridion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.greenhouseteam.enchiridion.Enchiridion;
-import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
-import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParamSets;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParams;
 import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;

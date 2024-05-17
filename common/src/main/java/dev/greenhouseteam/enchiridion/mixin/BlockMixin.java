@@ -2,7 +2,6 @@ package dev.greenhouseteam.enchiridion.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.sun.jna.platform.unix.aix.Perfstat;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParamSets;
@@ -16,7 +15,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
@@ -43,7 +41,6 @@ import java.util.function.Supplier;
 
 @Mixin(Block.class)
 public class BlockMixin {
-    @Shadow @Nullable private Item item;
     @Unique
     private static LootParams.Builder enchiridion$builder;
 
