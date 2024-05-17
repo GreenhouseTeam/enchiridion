@@ -1,6 +1,7 @@
 package dev.greenhouseteam.enchiridion.util;
 
 import com.mojang.datafixers.util.Pair;
+import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
 import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
@@ -8,15 +9,14 @@ import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.effect.MobEffectUtil;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -24,10 +24,86 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EnchiridionUtil {
+
+    public static void categoriseEnchantmentsOnItem(ItemEnchantments enchantments, ItemStack stack, DataComponentType<ItemEnchantments> componentType) {
+        ItemEnchantmentCategories categories = stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, new ItemEnchantmentCategories());
+
+        enchantments.keySet().forEach(enchantment -> {
+            Holder<EnchantmentCategory> category = EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment);
+            if (category != null && category.isBound() && !EnchiridionUtil.isValidInCategory(category, categories.get(category), enchantment)) {
+                categories.removeCategoryWithEnchantment(category, enchantment);
+                return;
+            }
+
+            if (category == null || !category.isBound() || categories.getCategories().containsKey(enchantment) && categories.getCategories().get(category).contains(enchantment) || !EnchiridionUtil.categoryAcceptsNewEnchantments(category, categories))
+                return;
+            categories.addCategoryWithEnchantment(category, enchantment);
+        });
+
+        if (enchantments.keySet().stream().anyMatch(enchantment -> EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment) != null && !categories.contains(enchantment))) {
+            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
+            mutable.removeIf(enchantment -> EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment) != null && !categories.contains(enchantment));
+            stack.set(componentType, mutable.toImmutable());
+        }
+        if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY))) {
+            if (categories.isEmpty())
+                stack.remove(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES);
+            else {
+                DataComponentPatch.Builder builder = DataComponentPatch.builder();
+                builder.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories);
+                stack.applyComponents(builder.build());
+            }
+        }
+    }
+
+
+    public static void categoriseStoredEnchantmentsOnItem(ItemEnchantments enchantments, ItemStack stack) {
+        ItemEnchantmentCategories categories = stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, new ItemEnchantmentCategories());
+
+        Map<Holder<EnchantmentCategory>, Set<HolderSet<Item>>> usedEnchantmentTags = new HashMap<>();
+
+        enchantments.keySet().forEach(enchantment -> {
+            List<Holder<EnchantmentCategory>> applicableCategories = EnchiridionUtil.getAllEnchantmentCategories(Enchiridion.getHelper().getReqistryAccess(), enchantment);
+            for (Holder<EnchantmentCategory> category : applicableCategories) {
+                HolderSet<Item> tag = enchantment.value().definition().primaryItems().orElse(enchantment.value().definition().supportedItems());
+
+                if (category.isBound() && usedEnchantmentTags.containsKey(category) && usedEnchantmentTags.get(category).stream().anyMatch(holders -> holders.stream().anyMatch(tag::contains))) {
+                    categories.removeCategoryWithEnchantment(category, enchantment);
+                    return;
+                }
+
+                if (!category.isBound() || categories.getCategories().containsKey(enchantment) && categories.getCategories().get(category).contains(enchantment) || usedEnchantmentTags.containsKey(category) && usedEnchantmentTags.get(category).stream().anyMatch(holders -> holders.stream().anyMatch(tag::contains)))
+                    return;
+                categories.addCategoryWithEnchantment(category, enchantment);
+                usedEnchantmentTags.computeIfAbsent(category, c -> new HashSet<>()).add(tag);
+                break;
+            }
+        });
+
+        if (enchantments.keySet().stream().anyMatch(enchantment -> EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment) != null && !categories.contains(enchantment))) {
+            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
+            mutable.removeIf(enchantment -> !EnchiridionUtil.getAllEnchantmentCategories(Enchiridion.getHelper().getReqistryAccess(), enchantment).isEmpty() && !categories.contains(enchantment));
+            stack.set(DataComponents.STORED_ENCHANTMENTS, mutable.toImmutable());
+        }
+        if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY))) {
+            if (categories.isEmpty())
+                stack.remove(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES);
+            else {
+                DataComponentPatch.Builder builder = DataComponentPatch.builder();
+                builder.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories);
+                stack.applyComponents(builder.build());
+            }
+        }
+    }
 
     @Nullable
     public static Pair<Holder<Enchantment>, Integer> getFirstEnchantmentAndLevel(HolderLookup.Provider registries, ItemEnchantments enchantments) {
@@ -64,6 +140,10 @@ public class EnchiridionUtil {
     @Nullable
     public static Holder<EnchantmentCategory> getFirstEnchantmentCategory(HolderLookup.Provider registries, Holder<Enchantment> enchantment) {
         return registries.lookupOrThrow(EnchiridionRegistries.ENCHANTMENT_CATEGORY).listElements().filter(category -> category.isBound() && category.value().acceptedEnchantments().contains(enchantment)).max(Comparator.comparingInt(value -> value.value().priority())).orElse(null);
+    }
+
+    public static List<Holder<EnchantmentCategory>> getAllEnchantmentCategories(HolderLookup.Provider registries, Holder<Enchantment> enchantment) {
+        return registries.lookupOrThrow(EnchiridionRegistries.ENCHANTMENT_CATEGORY).listElements().filter(category -> category.isBound() && category.value().acceptedEnchantments().contains(enchantment)).collect(Collectors.toList());
     }
 
     public static boolean isValidInCategory(HolderLookup.Provider registries, ItemEnchantmentCategories categories, Holder<Enchantment> enchantment) {

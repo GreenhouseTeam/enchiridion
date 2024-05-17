@@ -13,6 +13,7 @@ import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -47,34 +48,10 @@ public abstract class EnchantmentHelperMixin {
 
     @ModifyReturnValue(method = "updateEnchantments", at = @At("RETURN"))
     private static ItemEnchantments enchiridion$updateAndValidateCategories(ItemEnchantments enchantments, ItemStack stack, Consumer<ItemEnchantments.Mutable> consumer, @Local DataComponentType<ItemEnchantments> componentType) {
-        ItemEnchantmentCategories categories = stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, new ItemEnchantmentCategories());
-
-        enchantments.keySet().forEach(enchantment -> {
-            Holder<EnchantmentCategory> category = EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment);
-            if (category != null && category.isBound() && !EnchiridionUtil.isValidInCategory(category, categories.get(category), enchantment)) {
-                categories.removeCategoryWithEnchantment(category, enchantment);
-                return;
-            }
-
-            if (category == null || !category.isBound() || categories.getCategories().containsKey(enchantment) && categories.getCategories().get(category).contains(enchantment) || !EnchiridionUtil.categoryAcceptsNewEnchantments(category, categories))
-                return;
-            categories.addCategoryWithEnchantment(category, enchantment);
-        });
-
-        if (enchantments.keySet().stream().anyMatch(enchantment -> EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment) != null && !categories.contains(enchantment))) {
-            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
-            mutable.removeIf(enchantment -> EnchiridionUtil.getFirstEnchantmentCategory(Enchiridion.getHelper().getReqistryAccess(), enchantment) != null && !categories.contains(enchantment));
-            stack.set(componentType, mutable.toImmutable());
-        }
-        if (!categories.equals(stack.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY))) {
-            if (categories.isEmpty())
-                stack.remove(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES);
-            else {
-                DataComponentPatch.Builder builder = DataComponentPatch.builder();
-                builder.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, categories);
-                stack.applyComponents(builder.build());
-            }
-        }
+        if (componentType == DataComponents.STORED_ENCHANTMENTS)
+            EnchiridionUtil.categoriseStoredEnchantmentsOnItem(enchantments, stack);
+        else
+            EnchiridionUtil.categoriseEnchantmentsOnItem(enchantments, stack, componentType);
 
         return enchantments;
     }
