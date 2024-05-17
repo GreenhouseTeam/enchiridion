@@ -3,10 +3,10 @@ package dev.greenhouseteam.enchiridion.gradle
 object Versions {
     const val MOD = "1.0.0-alpha.1"
 
-    const val MINECRAFT = "24w19b"
-    const val INTERNAL_MINECRAFT = "24w19b"
+    const val MINECRAFT = "24w20a"
+    const val INTERNAL_MINECRAFT = "24w20a"
 
-    const val FABRIC_API = "0.98.1+1.21"
+    const val FABRIC_API = "0.98.2+1.21"
     const val FABRIC_LOADER = "0.15.11"
     const val MOD_MENU = "10.0.0-beta.1"
     const val FABRIC_LOADER_RANGE = ">=0.15"
