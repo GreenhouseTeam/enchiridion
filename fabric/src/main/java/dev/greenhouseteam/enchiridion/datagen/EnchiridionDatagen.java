@@ -119,7 +119,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SILK_TOUCH,
                             Enchantments.THORNS,
                             Enchantments.WIND_BURST,
-                            EnchiridionEnchantments.CRUMBLE
+                            EnchiridionEnchantments.CRUMBLE,
+                            EnchiridionEnchantments.JOUSTING
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.SECONDARY_CATEGORY)
                     .add(
@@ -188,6 +189,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(Enchiridion.EntityTypeTags.IGNORES_BARDING)
                     .add(EntityType.BOAT)
                     .add(EntityType.MINECART);
+            getOrCreateTagBuilder(Enchiridion.EntityTypeTags.PREVENTS_JOUSTING);
         }
     }
 

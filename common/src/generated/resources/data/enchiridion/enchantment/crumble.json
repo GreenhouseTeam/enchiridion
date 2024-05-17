@@ -27,12 +27,12 @@
   },
   "exclusive_set": "#minecraft:exclusive_set/mining",
   "max_cost": {
-    "base": 83,
+    "base": 65,
     "per_level_above_first": 0
   },
   "max_level": 1,
   "min_cost": {
-    "base": 33,
+    "base": 15,
     "per_level_above_first": 0
   },
   "slots": [

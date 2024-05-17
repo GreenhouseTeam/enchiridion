@@ -2,6 +2,8 @@ package dev.greenhouseteam.enchiridion.registry;
 
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
+import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
+import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
 import dev.greenhouseteam.enchiridion.registry.internal.RegistrationCallback;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -39,6 +41,9 @@ public class EnchiridionEnchantmentEffectComponents {
     public static final DataComponentType<List<ConditionalEffect<PreventHungerConsumptionEffect>>> PREVENT_HUNGER_CONSUMPTION = DataComponentType.<List<ConditionalEffect<PreventHungerConsumptionEffect>>>builder()
             .persistent(ConditionalEffect.codec(PreventHungerConsumptionEffect.CODEC, LootContextParamSets.ENCHANTED_ENTITY).listOf())
             .build();
+    public static final DataComponentType<List<RidingConditionalEffect<EnchantmentLocationBasedEffect>>> VEHICLE_CHANGED = DataComponentType.<List<RidingConditionalEffect<EnchantmentLocationBasedEffect>>>builder()
+            .persistent(RidingConditionalEffect.codec(EnchantmentLocationBasedEffect.CODEC, EnchiridionLootContextParamSets.VEHICLE_ENCHANTED_DAMAGE).listOf())
+            .build();
     public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> VEHICLE_DAMAGE_PROTECTION = DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, EnchiridionLootContextParamSets.VEHICLE_ENCHANTED_DAMAGE).listOf())
             .build();
@@ -50,6 +55,7 @@ public class EnchiridionEnchantmentEffectComponents {
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("post_shield_disable"), POST_SHIELD_DISABLE);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("prevent_hunger_consumption"), PREVENT_HUNGER_CONSUMPTION);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("target_block_changed"), TARGET_BLOCK_CHANGED);
+        callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("vehicle_changed"), VEHICLE_CHANGED);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("vehicle_damage_protection"), VEHICLE_DAMAGE_PROTECTION);
     }
 }

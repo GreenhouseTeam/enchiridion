@@ -1,0 +1,52 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.enchiridion.jousting"
+  },
+  "effects": {
+    "enchiridion:vehicle_changed": [
+      {
+        "affected": "this",
+        "effect": {
+          "type": "minecraft:attribute",
+          "amount": {
+            "type": "minecraft:linear",
+            "base": 1.0,
+            "per_level_above_first": 0.5
+          },
+          "attribute": "minecraft:player.entity_interaction_range",
+          "name": "enchantment.enchiridion.jousting",
+          "operation": "add_value",
+          "uuid": "d85d7660-c3d6-4d43-b5a0-279e79ab8ff0"
+        },
+        "enchanted": "this",
+        "requirements": {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "vehicle": {
+                "type": "#enchiridion:prevents_jousting"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 25,
+    "per_level_above_first": 10
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 10
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/sword",
+  "weight": 2
+}

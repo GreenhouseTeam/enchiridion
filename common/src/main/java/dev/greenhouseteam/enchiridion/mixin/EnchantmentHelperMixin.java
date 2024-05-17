@@ -54,15 +54,16 @@ public abstract class EnchantmentHelperMixin {
     private static MutableFloat enchiridion$addVehicleProtection(MutableFloat original, ServerLevel level, LivingEntity entity, DamageSource source) {
         if (!(entity.getFirstPassenger() instanceof LivingEntity passenger))
             return original;
+        LootParams.Builder params = new LootParams.Builder(level);
+        params.withParameter(LootContextParams.THIS_ENTITY, passenger);
+        params.withParameter(EnchiridionLootContextParams.VEHICLE, entity);
+        params.withParameter(LootContextParams.ORIGIN, entity.position());
+        params.withParameter(LootContextParams.DAMAGE_SOURCE, source);
+        params.withOptionalParameter(EnchiridionLootContextParams.FIRST_PASSENGER, passenger.getFirstPassenger());
+        params.withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, source.getDirectEntity());
+        params.withOptionalParameter(LootContextParams.ATTACKING_ENTITY, source.getEntity());
         runIterationOnEquipment(passenger, (enchantment, l, enchantedItem) -> {
-            LootParams.Builder params = new LootParams.Builder(level);
-            params.withParameter(LootContextParams.THIS_ENTITY, entity);
             params.withParameter(LootContextParams.ENCHANTMENT_LEVEL, l);
-            params.withParameter(LootContextParams.ORIGIN, entity.position());
-            params.withParameter(LootContextParams.DAMAGE_SOURCE, source);
-            params.withParameter(EnchiridionLootContextParams.FIRST_PASSENGER, passenger);
-            params.withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, source.getDirectEntity());
-            params.withOptionalParameter(LootContextParams.ATTACKING_ENTITY, source.getEntity());
 
             LootContext lootContext = new LootContext.Builder(params.create(EnchiridionLootContextParamSets.VEHICLE_ENCHANTED_DAMAGE)).create(Optional.empty());
 

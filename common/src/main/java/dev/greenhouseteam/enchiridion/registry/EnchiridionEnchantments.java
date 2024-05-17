@@ -4,7 +4,9 @@ import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.enchantment.effects.ExtinguishEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.FreezeEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
+import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
+import dev.greenhouseteam.enchiridion.enchantment.effects.RidingTarget;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.EntityTypePredicate;
@@ -45,6 +47,7 @@ import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemConditi
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
+import java.util.List;
 import java.util.UUID;
 
 public class EnchiridionEnchantments {
@@ -84,12 +87,12 @@ public class EnchiridionEnchantments {
                 .build(ASHES_CURSE.location());
         Enchantment barding = Enchantment.enchantment(
                 Enchantment.definition(legArmorEnchantable, 5, 4, Enchantment.dynamicCost(5, 6), Enchantment.dynamicCost(11, 6), 2, EquipmentSlotGroup.ARMOR)
-                ).withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(3.0F)),
+                ).withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(1.0F)),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.isNot(DamageTypeTags.BYPASSES_INVULNERABILITY)))
                                 .and(InvertedLootItemCondition.invert(
                                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
                                                 .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(Enchiridion.EntityTypeTags.IGNORES_BARDING)))))))
-                .withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(1.0F)),
+                .withEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_DAMAGE_PROTECTION, new AddValue(LevelBasedValue.perLevel(2.0F)),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.isNot(DamageTypeTags.BYPASSES_INVULNERABILITY)))
                                 .and(InvertedLootItemCondition.invert(
                                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
@@ -98,7 +101,7 @@ public class EnchiridionEnchantments {
                                                         .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(EntityType.PLAYER)))))))
                                 .and(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
                                         .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(EntityType.PLAYER))))))
-                .withEffect(EnchantmentEffectComponents.TICK, new RidingEntityEffect(RidingEntityEffect.Target.VEHICLE, new SpawnParticlesEffect(ParticleTypes.END_ROD, SpawnParticlesEffect.inBoundingBox(), SpawnParticlesEffect.inBoundingBox(), SpawnParticlesEffect.fixedVelocity(UniformFloat.of(-0.1F, 0.1F)), SpawnParticlesEffect.fixedVelocity(UniformFloat.of(-0.1F, 0.1F)), ConstantFloat.of(1.0F))),
+                .withEffect(EnchantmentEffectComponents.TICK, new RidingEntityEffect(RidingTarget.VEHICLE, new SpawnParticlesEffect(ParticleTypes.END_ROD, SpawnParticlesEffect.inBoundingBox(), SpawnParticlesEffect.inBoundingBox(), SpawnParticlesEffect.fixedVelocity(UniformFloat.of(-0.1F, 0.1F)), SpawnParticlesEffect.fixedVelocity(UniformFloat.of(-0.1F, 0.1F)), ConstantFloat.of(1.0F))),
                         LootItemEntityPropertyCondition.hasProperties(
                                 LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
                                 .periodicTick(5))
@@ -128,6 +131,15 @@ public class EnchiridionEnchantments {
                 .withEffect(EnchiridionEnchantmentEffectComponents.POST_SHIELD_DISABLE, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, AllOf.entityEffects(ExtinguishEffect.INSTANCE, new DamageEntity(LevelBasedValue.perLevel(2.0F), LevelBasedValue.perLevel(2.0F), freeze), new FreezeEffect(LevelBasedValue.perLevel(460F, 160F))),
                         DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().isDirect(true)))
                 .build(ICE_STRIKE.location());
+        Enchantment jousting = Enchantment.enchantment(Enchantment.definition(swordEnchantable, 2, 3, Enchantment.dynamicCost(10, 10), Enchantment.dynamicCost(25, 10), 4, EquipmentSlotGroup.MAINHAND)
+                ).withSpecialEffect(EnchiridionEnchantmentEffectComponents.VEHICLE_CHANGED, List.of(new RidingConditionalEffect<>(
+                        RidingTarget.THIS,
+                        RidingTarget.THIS,
+                        new EnchantmentAttributeEffect("enchantment.enchiridion.jousting", Attributes.ENTITY_INTERACTION_RANGE, LevelBasedValue.perLevel(1.0F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("d85d7660-c3d6-4d43-b5a0-279e79ab8ff0")),
+                        InvertedLootItemCondition.invert(
+                                LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
+                                        .vehicle(EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(Enchiridion.EntityTypeTags.PREVENTS_JOUSTING))))).build()))
+                ).build(JOUSTING.location());
         Enchantment reach = Enchantment.enchantment(
                 Enchantment.definition(miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(0.5F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
@@ -138,6 +150,7 @@ public class EnchiridionEnchantments {
         context.register(CRUMBLE, crumble);
         context.register(EXHILARATING, exhilarating);
         context.register(ICE_STRIKE, iceStrike);
+        context.register(JOUSTING, jousting);
         context.register(REACH, reach);
     }
 }

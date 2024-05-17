@@ -5,7 +5,13 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.mojang.datafixers.util.Pair;
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.access.EntityPostEntityDropParamsAccess;
+import dev.greenhouseteam.enchiridion.access.EntityRidingEffectsAccess;
+import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParamSets;
+import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParams;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -14,13 +20,16 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.TargetedConditionalEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
+import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import org.apache.commons.lang3.tuple.Triple;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,6 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Mixin(LivingEntity.class)
@@ -119,6 +129,40 @@ public abstract class LivingEntityMixin extends Entity implements EntityPostEnti
                         };
                         if (entity != null)
                             effect.effect().apply((ServerLevel)this.level(), entry.getSecond(), new EnchantedItemInUse(attacker.getItemBySlot(slot), slot, (LivingEntity)(Object)this), entity, entity.position());
+                    }
+                }
+            }
+        }
+    }
+
+    @Inject(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getAttributes()Lnet/minecraft/world/entity/ai/attributes/AttributeMap;"))
+    private void enchiridion$changeVehicleEquipmentUponChange(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
+        if (!this.level().isClientSide() && this.getVehicle() != null) {
+            ((EntityRidingEffectsAccess)this).enchiridion$resetRidingEffects();
+
+            LootParams.Builder params = new LootParams.Builder((ServerLevel) this.level());
+            params.withParameter(LootContextParams.THIS_ENTITY, this);
+            params.withParameter(EnchiridionLootContextParams.VEHICLE, this.getVehicle());
+            params.withParameter(LootContextParams.ORIGIN, this.position());
+            params.withOptionalParameter(EnchiridionLootContextParams.FIRST_PASSENGER, this.getFirstPassenger());
+
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : this.getItemBySlot(slot).getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && entry.getKey().value().matchingSlot(slot) && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.VEHICLE_CHANGED).isEmpty()).toList()) {
+                    params.withParameter(LootContextParams.ENCHANTMENT_LEVEL, enchantment.getIntValue());
+                    for (RidingConditionalEffect<EnchantmentLocationBasedEffect> conditionalEffect : enchantment.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.VEHICLE_CHANGED)) {
+                        if (conditionalEffect.matches(new LootContext.Builder(params.create(EnchiridionLootContextParamSets.VEHICLE_ENCHANTED)).create(Optional.empty()))) {
+                            EnchantedItemInUse itemInUse = new EnchantedItemInUse(this.getItemBySlot(slot), slot, (LivingEntity)(Object)this);
+                            for (Entity entity : conditionalEffect.affected().getEntities(this)) {
+                                conditionalEffect.effect().onChangedBlock(
+                                        (ServerLevel) this.level(),
+                                        enchantment.getIntValue(),
+                                        itemInUse,
+                                        entity,
+                                        entity.position(),
+                                        true);
+                            }
+                            ((EntityRidingEffectsAccess)this).enchiridion$addRidingEffect(slot, enchantment.getIntValue(), conditionalEffect);
+                        }
                     }
                 }
             }
