@@ -1,7 +1,6 @@
 package dev.greenhouseteam.enchiridion;
 
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelper;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -9,12 +8,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class Enchiridion {
     public static final String MOD_ID = "enchiridion";
@@ -49,6 +45,7 @@ public class Enchiridion {
 
     public static class EntityTypeTags {
         public static final TagKey<EntityType<?>> IGNORES_BARDING = TagKey.create(Registries.ENTITY_TYPE, asResource("ignores_barding"));
+        public static final TagKey<EntityType<?>> PREVENTS_JOUSTING = TagKey.create(Registries.ENTITY_TYPE, asResource("prevents_jousting"));
     }
 
     public static class ItemTags {
@@ -57,5 +54,9 @@ public class Enchiridion {
         public static final TagKey<Item> PICKAXE_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/pickaxe"));
         public static final TagKey<Item> ICE_STRIKE_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_strike"));
         public static final TagKey<Item> ICE_STRIKE_PRIMARY_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_strike_primary"));
+    }
+
+    public static class FluidTags {
+        public static final TagKey<Fluid> ACTIVATES_IMPALING = TagKey.create(Registries.FLUID, asResource("activates_impaling"));
     }
 }

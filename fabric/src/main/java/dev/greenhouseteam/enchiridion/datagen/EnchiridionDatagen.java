@@ -21,11 +21,10 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagBuilder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 
@@ -40,6 +39,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(BlockTagProvider::new);
         pack.addProvider(EntityTypeTagProvider::new);
         pack.addProvider(ItemTagProvider::new);
+        pack.addProvider(FluidTagProvider::new);
     }
 
     @Override
@@ -211,6 +211,18 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_STRIKE_PRIMARY_ENCHANTABLE);
             getOrCreateTagBuilder(Enchiridion.ItemTags.PICKAXE_ENCHANTABLE)
                     .forceAddTag(ItemTags.PICKAXES);
+        }
+    }
+
+    public static class FluidTagProvider extends FabricTagProvider.FluidTagProvider {
+        public FluidTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+            super(output, completableFuture);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider wrapperLookup) {
+            getOrCreateTagBuilder(Enchiridion.FluidTags.ACTIVATES_IMPALING)
+                    .forceAddTag(FluidTags.WATER);
         }
     }
 }
