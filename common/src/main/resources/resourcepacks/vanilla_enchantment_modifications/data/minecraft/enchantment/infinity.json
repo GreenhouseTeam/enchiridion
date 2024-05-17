@@ -18,13 +18,7 @@
         }
       }
     ],
-    "enchiridion:allow_firing_without_projectile": [
-      {
-        "effect": {
-
-        }
-      }
-    ]
+    "enchiridion:allow_firing_without_projectile": []
   },
   "exclusive_set": "#minecraft:exclusive_set/bow",
   "max_cost": {

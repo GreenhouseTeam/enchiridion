@@ -13,12 +13,16 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import javax.swing.Icon;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class EnchiridionEnchantmentEffectComponents {
-    public static final DataComponentType<List<ConditionalEffect<Unit>>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<ConditionalEffect<Unit>>>builder()
-            .persistent(ConditionalEffect.codec(Unit.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf())
+    public static final DataComponentType<List<LootItemCondition>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<LootItemCondition>>builder()
+            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).listOf())
             .build();
     public static final DataComponentType<List<ConditionalEffect<EnchantmentLocationBasedEffect>>> TARGET_BLOCK_CHANGED = DataComponentType.<List<ConditionalEffect<EnchantmentLocationBasedEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentLocationBasedEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_BLOCK).listOf())

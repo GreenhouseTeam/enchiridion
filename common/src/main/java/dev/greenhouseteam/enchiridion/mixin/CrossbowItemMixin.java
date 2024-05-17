@@ -27,10 +27,10 @@ public class CrossbowItemMixin {
     private boolean enchiridion$allowShootingCrossbowWithEmpty(boolean original, Level level, Player player, InteractionHand hand, @Local ItemStack stack) {
         if (level instanceof ServerLevel serverLevel) {
             LootParams.Builder params = new LootParams.Builder(serverLevel).withParameter(LootContextParams.TOOL, stack);
-            return stack.getEnchantments().entrySet().stream().noneMatch(entry -> entry.getKey().isBound() && entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ALLOW_FIRING_WITHOUT_PROJECTILE).stream().anyMatch(effect -> {
+            return stack.getEnchantments().entrySet().stream().noneMatch(entry -> entry.getKey().isBound() && (entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ALLOW_FIRING_WITHOUT_PROJECTILE).isEmpty() || entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ALLOW_FIRING_WITHOUT_PROJECTILE).stream().allMatch(effect -> {
                 params.withParameter(LootContextParams.ENCHANTMENT_LEVEL, entry.getIntValue());
-                return effect.matches(new LootContext.Builder(params.create(LootContextParamSets.ENCHANTED_ITEM)).create(Optional.empty()));
-            }));
+                return effect.test(new LootContext.Builder(params.create(LootContextParamSets.ENCHANTED_ITEM)).create(Optional.empty()));
+            })));
         }
         return original;
     }

@@ -31,10 +31,10 @@ public class ProjectileWeaponItemMixin {
                 int projectileCount = EnchantmentHelper.processProjectileCount(serverLevel, stack, entity, 1);
                 List<ItemStack> stacks = new ArrayList<>(projectileCount);
                 LootParams.Builder params = new LootParams.Builder(serverLevel).withParameter(LootContextParams.TOOL, stack);
-                if (stack.getEnchantments().entrySet().stream().anyMatch(entry -> entry.getKey().isBound() && entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ALLOW_FIRING_WITHOUT_PROJECTILE).stream().anyMatch(effect -> {
+                if (stack.getEnchantments().entrySet().stream().anyMatch(entry -> entry.getKey().isBound() && (entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ALLOW_FIRING_WITHOUT_PROJECTILE).isEmpty() || entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ALLOW_FIRING_WITHOUT_PROJECTILE).stream().allMatch(effect -> {
                     params.withParameter(LootContextParams.ENCHANTMENT_LEVEL, entry.getIntValue());
-                    return effect.matches(new LootContext.Builder(params.create(LootContextParamSets.ENCHANTED_ITEM)).create(Optional.empty()));
-                }))) {
+                    return effect.test(new LootContext.Builder(params.create(LootContextParamSets.ENCHANTED_ITEM)).create(Optional.empty()));
+                })))) {
                     for (int i = 0; i < projectileCount; ++i) {
                         ItemStack newAmmoStack = new ItemStack(Items.ARROW);
                         newAmmoStack.set(DataComponents.INTANGIBLE_PROJECTILE, Unit.INSTANCE);
