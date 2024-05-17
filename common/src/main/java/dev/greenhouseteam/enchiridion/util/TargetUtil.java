@@ -61,9 +61,10 @@ public class TargetUtil {
                                 pos.getCenter(),
                                 !((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().containsKey(entry.getLeft()) || !((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().get(entry.getLeft()).contains(effect.effect())
                         );
-                        ((PlayerTargetAccess)player).enchiridion$addActiveBlockTargetEnchantmentEffect(entry.getLeft(), effect.effect());
                         if (!changedAttributes)
-                            changedAttributes = effect.effect() instanceof EnchantmentAttributeEffect;
+                            changedAttributes = effect.effect() instanceof EnchantmentAttributeEffect && !((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().containsKey(entry.getLeft()) || !((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().get(entry.getLeft()).contains(effect.effect());
+                        ((PlayerTargetAccess)player).enchiridion$addActiveBlockTargetEnchantmentEffect(entry.getLeft(), effect.effect());
+
                     } else if (((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().containsKey(entry.getLeft()) && ((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().get(entry.getLeft()).contains(effect.effect())) {
                             ((PlayerTargetAccess)player).enchiridion$removeActiveBlockTargetEnchantmentEffect(entry.getLeft(), effect.effect());
                             effect.effect().onDeactivated(
