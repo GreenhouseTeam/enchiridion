@@ -109,6 +109,24 @@
             }
           ]
         }
+      },
+      {
+        "effect": {
+          "type": "minecraft:attribute",
+          "amount": 1.4,
+          "attribute": "minecraft:player.mining_efficiency",
+          "name": "enchantment.enchiridion.crumble.harder_stone",
+          "operation": "add_multiplied_total",
+          "uuid": "e2fd9d91-1220-438d-ad67-cc11f499129f"
+        },
+        "requirements": {
+          "condition": "minecraft:location_check",
+          "predicate": {
+            "block": {
+              "blocks": "#enchiridion:harder_stone"
+            }
+          }
+        }
       }
     ]
   },

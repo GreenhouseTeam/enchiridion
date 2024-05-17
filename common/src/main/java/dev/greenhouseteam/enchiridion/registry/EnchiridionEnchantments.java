@@ -151,6 +151,11 @@ public class EnchiridionEnchantments {
                                                 .effects(MobEffectsPredicate.Builder.effects()
                                                         .and(MobEffects.DIG_SPEED, new MobEffectsPredicate.MobEffectInstancePredicate(MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.ANY, Optional.empty(), Optional.empty()))))
                         )
+                ).withEffect(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED, new EnchantmentAttributeEffect("enchantment.enchiridion.crumble.harder_stone", Attributes.MINING_EFFICIENCY, LevelBasedValue.constant(1.4F), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, UUID.fromString("e2fd9d91-1220-438d-ad67-cc11f499129f")),
+                        LocationCheck.checkLocation(LocationPredicate.Builder.location()
+                                .setBlock(
+                                        BlockPredicate.Builder.block()
+                                                .of(Enchiridion.BlockTags.HARDER_STONE)))
                 ).build(CRUMBLE.location());
         Enchantment exhilarating = Enchantment.enchantment(
                 Enchantment.definition(miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)

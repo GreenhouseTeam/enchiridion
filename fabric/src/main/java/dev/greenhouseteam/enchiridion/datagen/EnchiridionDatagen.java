@@ -176,6 +176,9 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .forceAddTag(BlockTags.BASE_STONE_OVERWORLD)
                     .forceAddTag(BlockTags.BASE_STONE_NETHER)
                     .add(Blocks.END_STONE);
+            getOrCreateTagBuilder(Enchiridion.BlockTags.HARDER_STONE)
+                    .add(Blocks.DEEPSLATE)
+                    .add(Blocks.END_STONE);
         }
     }
 
