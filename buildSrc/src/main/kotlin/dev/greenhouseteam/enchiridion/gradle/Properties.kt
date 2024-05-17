@@ -5,7 +5,7 @@ object Properties {
     const val MOD_NAME = "Enchiridion"
     const val MOD_ID = "enchiridion"
     const val MOD_AUTHOR = "Greenhouse Team"
-    const val MOD_CONTRIBUTORS = "MerchantPug"
+    const val MOD_CONTRIBUTORS = "MerchantPug, Omniv"
     const val DESCRIPTION = "An enchantment rework that creates a more choice oriented system with enchantments."
     const val LICENSE = "MPL-2.0"
 
