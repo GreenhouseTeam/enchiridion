@@ -15,6 +15,7 @@
     "EntityMixin",
     "ItemEnchantmentsAccessor",
     "LivingEntityMixin",
+    "MinecraftServerMixin",
     "PlayerMixin",
     "ProjectileWeaponItemMixin",
     "ServerPlayerMixin"

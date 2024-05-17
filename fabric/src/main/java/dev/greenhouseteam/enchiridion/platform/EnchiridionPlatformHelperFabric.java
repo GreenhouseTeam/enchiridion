@@ -19,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,8 +48,8 @@ public class EnchiridionPlatformHelperFabric implements EnchiridionPlatformHelpe
     }
 
     @Override
-    public boolean isLoaderResourcePack(Resource resource) {
-        return resource.source().location().title().contains(Component.translatable("pack.name.fabricMod"));
+    public Collection<ServerPlayer> getTracking(Entity entity) {
+        return PlayerLookup.tracking(entity);
     }
 
     @Override

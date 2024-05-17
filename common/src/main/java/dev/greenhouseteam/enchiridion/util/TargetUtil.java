@@ -1,18 +1,19 @@
 package dev.greenhouseteam.enchiridion.util;
 
+import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.access.PlayerTargetAccess;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionLootContextParamSets;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -27,10 +28,12 @@ import java.util.Optional;
 import java.util.Set;
 
 public class TargetUtil {
-    private static final Object2IntMap<EnchantmentLocationBasedEffect> FALLOFF = new Object2IntArrayMap<>();
-
     public static void updateBlockLookEffects(ServerPlayer player) {
         var miningEnchantmentComponents = player.getMainHandItem().getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED).isEmpty()).map(entry -> Triple.of(entry.getKey(), entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.TARGET_BLOCK_CHANGED), entry.getIntValue())).toList();
+        boolean changedAttributes = false;
+
+        if (miningEnchantmentComponents.isEmpty() && ((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().isEmpty())
+            return;
 
         Vec3 startPos = player.getEyePosition();
         Vec3 endPos = startPos.add(player.calculateViewVector(player.getXRot(), player.getYRot()).scale(player.blockInteractionRange()));
@@ -58,9 +61,10 @@ public class TargetUtil {
                                 pos.getCenter(),
                                 !((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().containsKey(entry.getLeft()) || !((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().get(entry.getLeft()).contains(effect.effect())
                         );
-                        FALLOFF.put(effect.effect(), 0);
                         ((PlayerTargetAccess)player).enchiridion$addActiveBlockTargetEnchantmentEffect(entry.getLeft(), effect.effect());
-                    } else if (((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().containsKey(entry.getLeft()) && ((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().get(entry.getLeft()).contains(effect.effect()) && FALLOFF.getOrDefault(effect.effect(), 0) > 5) {
+                        if (!changedAttributes)
+                            changedAttributes = effect.effect() instanceof EnchantmentAttributeEffect;
+                    } else if (((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().containsKey(entry.getLeft()) && ((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().get(entry.getLeft()).contains(effect.effect())) {
                             ((PlayerTargetAccess)player).enchiridion$removeActiveBlockTargetEnchantmentEffect(entry.getLeft(), effect.effect());
                             effect.effect().onDeactivated(
                                 new EnchantedItemInUse(player.getMainHandItem(), EquipmentSlot.MAINHAND, player),
@@ -68,8 +72,9 @@ public class TargetUtil {
                                 pos.getCenter(),
                                 entry.getRight()
                         );
-                    } else
-                        FALLOFF.computeIntIfPresent(effect.effect(), (effect1, integer) -> integer + 1);
+                        if (!changedAttributes)
+                            changedAttributes = effect.effect() instanceof EnchantmentAttributeEffect;
+                    }
                 }
             }
         } else if (!((PlayerTargetAccess)player).enchiridion$activeBlockTargetEnchantmentEffects().isEmpty()) {
@@ -83,9 +88,18 @@ public class TargetUtil {
                                 pos.getCenter(),
                                 player.getMainHandItem().getEnchantments().getLevel(holder)
                         );
+                        if (!changedAttributes)
+                            changedAttributes = effect instanceof EnchantmentAttributeEffect;
                     }
             }
-            FALLOFF.clear();
+        }
+
+        if (changedAttributes) {
+            ClientboundUpdateAttributesPacket packet = new ClientboundUpdateAttributesPacket(player.getId(), player.getAttributes().getAttributesToSync());
+            for (ServerPlayer others : Enchiridion.getHelper().getTracking(player))
+                others.connection.send(packet);
+            player.connection.send(packet);
+            player.getAttributes().getAttributesToSync().clear();
         }
     }
 

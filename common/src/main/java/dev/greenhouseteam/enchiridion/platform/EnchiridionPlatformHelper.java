@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public interface EnchiridionPlatformHelper {
@@ -24,7 +25,7 @@ public interface EnchiridionPlatformHelper {
 
     RegistryAccess getReqistryAccess();
 
-    boolean isLoaderResourcePack(Resource resource);
+    Collection<ServerPlayer> getTracking(Entity entity);
 
     void sendClientbound(ServerPlayer player, CustomPacketPayload payload);
 
