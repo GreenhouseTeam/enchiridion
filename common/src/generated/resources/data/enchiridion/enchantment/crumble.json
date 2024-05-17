@@ -113,7 +113,7 @@
       {
         "effect": {
           "type": "minecraft:attribute",
-          "amount": 1.4,
+          "amount": 0.4,
           "attribute": "minecraft:player.mining_efficiency",
           "name": "enchantment.enchiridion.crumble.harder_stone",
           "operation": "add_multiplied_total",
