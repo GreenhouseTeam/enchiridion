@@ -2,8 +2,9 @@ package dev.greenhouseteam.enchiridion.enchantment.category;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.UnboundedMapCodec;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -19,29 +20,27 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 public class ItemEnchantmentCategories {
-    public static final ItemEnchantmentCategories EMPTY = new ItemEnchantmentCategories(new Object2ObjectOpenHashMap<>());
-    public static final Codec<ItemEnchantmentCategories> CODEC = new UnboundedMapCodec<>(EnchantmentCategory.CODEC, Enchantment.CODEC.listOf().xmap(ObjectArrayList::new, Function.identity())).xmap(Object2ObjectOpenHashMap::new, Function.identity()).xmap(ItemEnchantmentCategories::new, categories -> categories.enchantmentCategories);
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemEnchantmentCategories> STREAM_CODEC = ByteBufCodecs.map(Object2ObjectOpenHashMap::new, EnchantmentCategory.STREAM_CODEC, ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT).apply(ByteBufCodecs.list()).map(ObjectArrayList::new, Function.identity())).map(ItemEnchantmentCategories::new, categories -> new Object2ObjectOpenHashMap<>(categories.enchantmentCategories));
+    public static final ItemEnchantmentCategories EMPTY = new ItemEnchantmentCategories(new Object2ObjectArrayMap<>());
+    public static final Codec<ItemEnchantmentCategories> CODEC = new UnboundedMapCodec<>(EnchantmentCategory.CODEC, Enchantment.CODEC.listOf().xmap(ObjectArrayList::new, Function.identity())).xmap(Object2ObjectArrayMap::new, Function.identity()).xmap(ItemEnchantmentCategories::new, categories -> (Object2ObjectArrayMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>>) categories.enchantmentCategories);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemEnchantmentCategories> STREAM_CODEC = ByteBufCodecs.map(Object2ObjectArrayMap::new, EnchantmentCategory.STREAM_CODEC, ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT).apply(ByteBufCodecs.list()).map(ObjectArrayList::new, Function.identity())).map(ItemEnchantmentCategories::new, categories -> new Object2ObjectArrayMap<>(categories.enchantmentCategories));
 
-    private final Object2ObjectOpenHashMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> enchantmentCategories;
+    private final Object2ObjectMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> enchantmentCategories;
 
     public ItemEnchantmentCategories() {
-        this.enchantmentCategories = new Object2ObjectOpenHashMap<>();
+        this.enchantmentCategories = new Object2ObjectArrayMap<>();
     }
 
-    public ItemEnchantmentCategories(Object2ObjectOpenHashMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> enchantmentCategories) {
-        this.enchantmentCategories = enchantmentCategories;
+    public ItemEnchantmentCategories(Object2ObjectMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> enchantmentCategories) {
+        this.enchantmentCategories = new Object2ObjectArrayMap<>(enchantmentCategories);
     }
 
-    public Map<Holder<EnchantmentCategory>, List<Holder<Enchantment>>> getCategories() {
-        return Map.copyOf(enchantmentCategories);
+    public Object2ObjectMap<Holder<EnchantmentCategory>, ObjectArrayList<Holder<Enchantment>>> getCategories() {
+        return Object2ObjectMaps.unmodifiable(enchantmentCategories);
     }
 
     @Nullable

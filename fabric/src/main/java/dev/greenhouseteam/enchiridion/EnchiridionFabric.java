@@ -16,14 +16,13 @@ import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectCompo
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantments;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionEntityEnchantmentEffects;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
+import dev.greenhouseteam.enchiridion.util.AnvilUtil;
 import dev.greenhouseteam.enchiridion.util.ClientRegistryAccessReference;
 import dev.greenhouseteam.enchiridion.util.CreativeTabUtil;
 import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import dev.greenhouseteam.enchiridion.util.TagUtil;
-import dev.greenhouseteam.enchiridion.util.TargetUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -138,7 +137,7 @@ public class EnchiridionFabric implements ModInitializer {
             ItemEnchantmentCategories categories = target.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY);
             Holder<EnchantmentCategory> category = EnchiridionUtil.getFirstEnchantmentCategory(getRegistryAccess(), enchantment);
 
-            if (category != null && !EnchiridionUtil.categoryAcceptsNewEnchantmentsWithValue(category, categories, enchantment))
+            if (category != null && !AnvilUtil.getAnvilContext() && !EnchiridionUtil.categoryAcceptsNewEnchantmentsWithValue(category, categories, enchantment))
                 return TriState.FALSE;
 
             return TriState.DEFAULT;
