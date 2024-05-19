@@ -5,11 +5,13 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AnvilMenuMixin",
     "BlockMixin",
     "BowItemMixin",
     "CreativeModeTabsAccessor",
     "CrossbowItemMixin",
     "EnchantCommandMixin",
+    "EnchantmentHelperAccessor",
     "EnchantmentHelperMixin",
     "EnchantmentMenuMixin",
     "EntityMixin",

@@ -6,16 +6,23 @@ import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 public class ItemEnchantmentCategories {
@@ -64,6 +71,12 @@ public class ItemEnchantmentCategories {
         return List.copyOf(enchantmentCategories.get(category));
     }
 
+    public boolean isValid(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment, DataComponentType<ItemEnchantments> type) {
+        if (type == DataComponents.STORED_ENCHANTMENTS)
+            return isStoredValid(category, enchantment);
+        return isValid(category, enchantment);
+    }
+
     public boolean isValid(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment) {
         if (!category.isBound())
             return false;
@@ -71,7 +84,24 @@ public class ItemEnchantmentCategories {
             return false;
         if (category.value().limit().isEmpty() || !enchantmentCategories.containsKey(category))
             return true;
-        return category.value().limit().get() < enchantmentCategories.get(category).size();
+        return enchantmentCategories.get(category).size() < category.value().limit().get();
+    }
+
+    public boolean isStoredValid(Holder<EnchantmentCategory> category, Holder<Enchantment> enchantment) {
+        if (!category.isBound())
+            return false;
+        if (!category.value().acceptedEnchantments().contains(enchantment))
+            return false;
+        if (category.value().limit().isEmpty() || !enchantmentCategories.containsKey(category))
+            return true;
+
+        HolderSet<Item> holders = enchantment.value().definition().primaryItems().orElse(enchantment.value().definition().supportedItems());
+        long count = enchantmentCategories.get(category).stream().filter(e -> {
+            HolderSet<Item> enchantmentItems = e.value().definition().primaryItems().orElse(e.value().definition().supportedItems());
+            return enchantmentItems.stream().anyMatch(holders::contains);
+        }).count();
+
+        return count < category.value().limit().get();
     }
 
     public boolean contains(Holder<Enchantment> enchantment) {
