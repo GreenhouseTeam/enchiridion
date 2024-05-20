@@ -106,7 +106,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         if (category == null || !category.isBound())
             category = inputCategories.findFirstCategory(enchantment);
 
-        if ((inputCategories.get(category).size() + otherCategories.get(category).size() == inputCategories.get(category).size() ||
+        if (!inputCategories.get(category).isEmpty() && !otherCategories.get(category).isEmpty() &&
+                (inputCategories.get(category).size() + otherCategories.get(category).size() == inputCategories.get(category).size() ||
                 inputCategories.get(category).size() + otherCategories.get(category).size() == otherCategories.get(category).size()) && enchantmentLevel < inputEnchantmentLevel) {
             original -= anvilCost * inputEnchantmentLevel;
             original += 1;
