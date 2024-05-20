@@ -2,6 +2,7 @@ package dev.greenhouseteam.enchiridion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -12,7 +13,6 @@ import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.util.AnvilUtil;
 import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.ObjectReferenceImmutablePair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -28,12 +28,14 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashSet;
@@ -43,6 +45,8 @@ import java.util.Set;
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
     @Shadow private int repairItemCountCost;
+
+    @Shadow @Final private DataSlot cost;
 
     public AnvilMenuMixin(@Nullable MenuType<?> menuType, int syncId, Inventory inventory, ContainerLevelAccess access) {
         super(menuType, syncId, inventory, access);
@@ -64,9 +68,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
     }
 
     @Unique
-    private ItemStack enchiridion$resultStack;
-
-    @Unique
     private Set<Object2IntMap.Entry<Holder<Enchantment>>> enchiridion$otherEnchantments = new HashSet<>();
 
     @ModifyArg(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"), index = 1)
@@ -82,8 +83,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
     @ModifyArg(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"), index = 1)
     private ItemStack enchiridion$clearResultStack(ItemStack original) {
-        if (original.isEmpty())
-            enchiridion$resultStack = null;
         AnvilUtil.setAnvilContext(false);
         return original;
     }
@@ -93,13 +92,32 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         input.set(inputSlots.getItem(0));
     }
 
+    @ModifyVariable(method = "createResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/ItemStack;getCount()I", ordinal = 1), ordinal = 0)
+    private int enchiridion$setEnchantmentAnvilCost(int original,
+                                                    @Local(ordinal = 1) ItemStack input, @Local(ordinal = 2) ItemStack otherInput,
+                                                    @Local(ordinal = 2) int enchantmentLevel, @Local(ordinal = 3) int inputEnchantmentLevel,
+                                                    @Local(ordinal = 4) int anvilCost,
+                                                    @Local ItemEnchantments.Mutable mutable,
+                                                    @Local Holder<Enchantment> enchantment) {
+        ItemEnchantmentCategories inputCategories = input.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY);
+        ItemEnchantmentCategories otherCategories = otherInput.getOrDefault(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, ItemEnchantmentCategories.EMPTY);
+
+        Holder<EnchantmentCategory> category = otherCategories.findFirstCategory(enchantment);
+        if (category == null || !category.isBound())
+            category = inputCategories.findFirstCategory(enchantment);
+
+        if ((inputCategories.get(category).size() + otherCategories.get(category).size() == inputCategories.get(category).size() ||
+                inputCategories.get(category).size() + otherCategories.get(category).size() == otherCategories.get(category).size()) && enchantmentLevel < inputEnchantmentLevel) {
+            original -= anvilCost * inputEnchantmentLevel;
+            original += 1;
+        }
+        return original;
+    }
+
     @ModifyArg(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 4), index = 1)
     private ItemStack enchiridion$setAnvilItem(ItemStack original) {
         if (repairItemCountCost > 0 || original.isEmpty())
             return original;
-
-        if (enchiridion$resultStack != null)
-            return enchiridion$resultStack;
 
         ItemStack input = this.inputSlots.getItem(0);
         ItemStack otherInput = this.inputSlots.getItem(1);
@@ -158,11 +176,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         }
 
         if (!itemEnchantments.keySet().isEmpty() || !newCategories.isEmpty()) {
+            if ((newCategories.getCategories().keySet().equals(inputCategories.getCategories().keySet()) || newCategories.getCategories().keySet().equals(otherCategories.getCategories().keySet())) && newCategories.getCategories().entrySet().stream().allMatch(entry -> inputCategories.getCategories().containsKey(entry.getKey()) && entry.getValue().size() == inputCategories.get(entry.getKey()).size() || otherCategories.getCategories().containsKey(entry.getKey()) && entry.getValue().size() == otherCategories.get(entry.getKey()).size()))
+                this.cost.set(1);
             original.set(EnchantmentHelperAccessor.enchiridion$invokeGetComponentType(original), itemEnchantments.toImmutable());
             original.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, newCategories);
             EnchantmentHelper.setEnchantments(original, itemEnchantments.toImmutable());
-            enchiridion$resultStack = original.copy();
-            return enchiridion$resultStack;
         }
 
         return original;
@@ -177,7 +195,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
     @Inject(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 0))
     private void enchiridion$takeInputItem(Player player, ItemStack stack, CallbackInfo ci, @Share("input") LocalRef <ItemStack> input) {
         input.set(inputSlots.getItem(0));
-        enchiridion$resultStack = null;
     }
 
     @ModifyArg(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 3), index = 1)
