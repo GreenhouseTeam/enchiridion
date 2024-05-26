@@ -13,6 +13,8 @@ import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
 import dev.greenhouseteam.enchiridion.util.AnvilUtil;
 import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -38,7 +40,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 // TODO: Once NeoForge updates, see if some methods need to be moved to an event.
@@ -92,6 +96,9 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         input.set(inputSlots.getItem(0));
     }
 
+    @Unique
+    private boolean enchiridion$hasCountedMerging;
+
     @ModifyVariable(method = "createResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/ItemStack;getCount()I", ordinal = 1), ordinal = 0)
     private int enchiridion$setEnchantmentAnvilCost(int original,
                                                     @Local(ordinal = 1) ItemStack input, @Local(ordinal = 2) ItemStack otherInput,
@@ -106,12 +113,15 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         if (category == null || !category.isBound())
             category = inputCategories.findFirstCategory(enchantment);
 
-        if (!inputCategories.get(category).isEmpty() && !otherCategories.get(category).isEmpty() &&
-                (inputCategories.get(category).size() + otherCategories.get(category).size() == inputCategories.get(category).size() ||
-                inputCategories.get(category).size() + otherCategories.get(category).size() == otherCategories.get(category).size()) && enchantmentLevel < inputEnchantmentLevel) {
+        if (!inputCategories.get(category).isEmpty() && !otherCategories.get(category).isEmpty() && category.isBound() &&
+                (inputCategories.get(category).size() >= category.value().limit().orElse(Integer.MAX_VALUE) ||
+                        inputCategories.get(category).size() >= category.value().limit().orElse(Integer.MAX_VALUE)) && enchantmentLevel < inputEnchantmentLevel) {
             original -= anvilCost * inputEnchantmentLevel;
-            original += 1;
-        }
+            original += enchiridion$hasCountedMerging ? 1 : 0;
+            enchiridion$hasCountedMerging = true;
+        } else if (enchantmentLevel == inputEnchantmentLevel)
+            original -= anvilCost * inputEnchantmentLevel;
+
         return original;
     }
 
@@ -119,6 +129,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
     private ItemStack enchiridion$setAnvilItem(ItemStack original) {
         if (repairItemCountCost > 0 || original.isEmpty())
             return original;
+
+        enchiridion$hasCountedMerging = false;
 
         ItemStack input = this.inputSlots.getItem(0);
         ItemStack otherInput = this.inputSlots.getItem(1);
@@ -176,12 +188,17 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
             });
         }
 
-        if (!itemEnchantments.keySet().isEmpty() || !newCategories.isEmpty()) {
-            if ((newCategories.getCategories().keySet().equals(inputCategories.getCategories().keySet()) || newCategories.getCategories().keySet().equals(otherCategories.getCategories().keySet())) && newCategories.getCategories().entrySet().stream().allMatch(entry -> inputCategories.getCategories().containsKey(entry.getKey()) && entry.getValue().size() == inputCategories.get(entry.getKey()).size() || otherCategories.getCategories().containsKey(entry.getKey()) && entry.getValue().size() == otherCategories.get(entry.getKey()).size()))
+        if (!itemEnchantments.keySet().isEmpty()) {
+            if (!inputCategories.isEmpty() && !otherCategories.isEmpty() && inputCategories.getCategories().keySet().equals(otherCategories.getCategories().keySet()) && newCategories.getCategories().entrySet().stream().allMatch(entry -> inputCategories.getCategories().containsKey(entry.getKey()) && entry.getValue().size() == inputCategories.get(entry.getKey()).size() || otherCategories.getCategories().containsKey(entry.getKey()) && entry.getValue().size() == otherCategories.get(entry.getKey()).size()))
                 this.cost.set(1);
             original.set(EnchantmentHelperAccessor.enchiridion$invokeGetComponentType(original), itemEnchantments.toImmutable());
             original.set(EnchiridionDataComponents.ENCHANTMENT_CATEGORIES, newCategories);
             EnchantmentHelper.setEnchantments(original, itemEnchantments.toImmutable());
+        }
+
+        if (itemEnchantments.toImmutable().equals(EnchantmentHelper.getEnchantmentsForCrafting(input))) {
+            this.cost.set(0);
+            return ItemStack.EMPTY;
         }
 
         return original;
