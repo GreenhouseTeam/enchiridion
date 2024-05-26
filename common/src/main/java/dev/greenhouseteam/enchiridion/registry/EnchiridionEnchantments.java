@@ -45,12 +45,17 @@ import net.minecraft.world.item.enchantment.effects.DamageEntity;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.Ignite;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.EnchantmentLevelProvider;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +64,7 @@ import java.util.UUID;
 public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> BARDING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("barding"));
     public static final ResourceKey<Enchantment> CRUMBLE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("crumble"));
+    public static final ResourceKey<Enchantment> DREDGE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("dredge"));
     public static final ResourceKey<Enchantment> EXHILARATING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("exhilarating"));
     public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> JOUSTING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("jousting"));
@@ -70,6 +76,7 @@ public class EnchiridionEnchantments {
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
 
         HolderSet<Item> legArmorEnchantable = items.getOrThrow(ItemTags.LEG_ARMOR_ENCHANTABLE);
+        HolderSet<Item> fishingEnchantable = items.getOrThrow(ItemTags.FISHING_ENCHANTABLE);
         HolderSet<Item> miningEnchantable = items.getOrThrow(ItemTags.MINING_ENCHANTABLE);
         HolderSet<Item> swordEnchantable = items.getOrThrow(ItemTags.SWORD_ENCHANTABLE);
 
@@ -82,6 +89,7 @@ public class EnchiridionEnchantments {
 
         HolderSet<Enchantment> miningExclusiveSet = enchantments.getOrThrow(EnchantmentTags.MINING_EXCLUSIVE);
         HolderSet<Enchantment> elementalExclusiveSet = enchantments.getOrThrow(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE);
+        HolderSet<Enchantment> fishingExclusiveSet = enchantments.getOrThrow(Enchiridion.EnchantmentTags.FISHING_EXCLUSIVE);
 
         HolderGetter<DamageType> damageType = context.lookup(Registries.DAMAGE_TYPE);
         Holder<DamageType> freeze = damageType.getOrThrow(DamageTypes.FREEZE);
@@ -155,8 +163,15 @@ public class EnchiridionEnchantments {
                         LocationCheck.checkLocation(LocationPredicate.Builder.location()
                                 .setBlock(
                                         BlockPredicate.Builder.block()
-                                                .of(Enchiridion.BlockTags.HARDER_STONE)))
+                                                .of(Enchiridion.BlockTags.HARDER_STONE)
+                                )
+                        )
                 ).build(CRUMBLE.location());
+        Enchantment dredge = Enchantment.enchantment(
+                Enchantment.definition(fishingEnchantable, 2, 3, Enchantment.dynamicCost(15, 9), Enchantment.dynamicCost(65, 9), 4, EquipmentSlotGroup.MAINHAND)
+                ).exclusiveWith(fishingExclusiveSet)
+                .withEffect(EnchiridionEnchantmentEffectComponents.ADDITIONAL_FISHING_LOOT, BuiltInLootTables.FISHING, LootItemRandomChanceCondition.randomChance(EnchantmentLevelProvider.forEnchantmentLevel(LevelBasedValue.perLevel(0.1F))))
+                .build(DREDGE.location());
         Enchantment exhilarating = Enchantment.enchantment(
                 Enchantment.definition(miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchiridionEnchantmentEffectComponents.PREVENT_HUNGER_CONSUMPTION, new PreventHungerConsumptionEffect(false, true, false))
@@ -186,6 +201,7 @@ public class EnchiridionEnchantments {
         context.register(ASHES_CURSE, ashesCurse);
         context.register(BARDING, barding);
         context.register(CRUMBLE, crumble);
+        context.register(DREDGE, dredge);
         context.register(EXHILARATING, exhilarating);
         context.register(ICE_STRIKE, iceStrike);
         context.register(JOUSTING, jousting);

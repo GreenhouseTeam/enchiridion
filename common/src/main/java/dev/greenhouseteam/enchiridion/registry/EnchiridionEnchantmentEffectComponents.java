@@ -5,8 +5,11 @@ import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumpti
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
 import dev.greenhouseteam.enchiridion.registry.internal.RegistrationCallback;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.TargetedConditionalEffect;
@@ -14,6 +17,7 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
@@ -23,6 +27,9 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class EnchiridionEnchantmentEffectComponents {
+    public static final DataComponentType<List<ConditionalEffect<ResourceKey<LootTable>>>> ADDITIONAL_FISHING_LOOT = DataComponentType.<List<ConditionalEffect<ResourceKey<LootTable>>>>builder()
+            .persistent(ConditionalEffect.codec(ResourceKey.codec(Registries.LOOT_TABLE), EnchiridionLootContextParamSets.ENCHANTED_FISHING).listOf())
+            .build();
     public static final DataComponentType<List<LootItemCondition>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<LootItemCondition>>builder()
             .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).listOf())
             .build();
@@ -49,6 +56,7 @@ public class EnchiridionEnchantmentEffectComponents {
             .build();
 
     public static void registerAll(RegistrationCallback<DataComponentType<?>> callback) {
+        callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("additional_fishing_loot"), ADDITIONAL_FISHING_LOOT);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("allow_firing_without_projectile"), ALLOW_FIRING_WITHOUT_PROJECTILE);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("post_block_drop"), POST_BLOCK_DROP);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("post_entity_drop"), POST_ENTITY_DROP);

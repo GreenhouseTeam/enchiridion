@@ -3,6 +3,7 @@ package dev.greenhouseteam.enchiridion;
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -42,6 +43,7 @@ public class Enchiridion {
         public static final TagKey<Enchantment> UNCATEGORISED_CATEGORY = TagKey.create(Registries.ENCHANTMENT, asResource("category/uncategorised"));
 
         public static final TagKey<Enchantment> ELEMENTAL_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, asResource("exclusive_set/elemental"));
+        public static final TagKey<Enchantment> FISHING_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, asResource("exclusive_set/fishing"));
     }
 
     public static class EntityTypeTags {

@@ -27,6 +27,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -90,6 +91,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(EnchiridionEnchantments.ASHES_CURSE);
 
             getOrCreateTagBuilder(EnchantmentTags.NON_TREASURE)
+                    .add(EnchiridionEnchantments.DREDGE)
                     .add(EnchiridionEnchantments.EXHILARATING)
                     .add(EnchiridionEnchantments.ICE_STRIKE)
                     .add(EnchiridionEnchantments.REACH);
@@ -120,6 +122,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.THORNS,
                             Enchantments.WIND_BURST,
                             EnchiridionEnchantments.CRUMBLE,
+                            EnchiridionEnchantments.DREDGE,
                             EnchiridionEnchantments.JOUSTING
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.SECONDARY_CATEGORY)
