@@ -7,10 +7,12 @@ import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumpti
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingTarget;
+import dev.greenhouseteam.enchiridion.enchantment.effects.RunFunctionOnLootEffect;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.EntityTypePredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.MobEffectsPredicate;
@@ -22,9 +24,11 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraft.world.damagesource.DamageType;
@@ -48,6 +52,10 @@ import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.functions.EnchantWithLevelsFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
+import net.minecraft.world.level.storage.loot.functions.SetItemDamageFunction;
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
@@ -55,7 +63,10 @@ import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.EnchantmentLevelProvider;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +80,7 @@ public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> JOUSTING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("jousting"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reach"));
+    public static final ResourceKey<Enchantment> RELIABLE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reliable"));
 
     public static final ResourceKey<Enchantment> ASHES_CURSE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ashes_curse"));
 
@@ -197,6 +209,18 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(0.5F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
                 .build(REACH.location());
+        Enchantment reliable = Enchantment.enchantment(
+                        Enchantment.definition(fishingEnchantable, 1, 1, Enchantment.constantCost(5), Enchantment.constantCost(12), 2, EquipmentSlotGroup.MAINHAND)
+                ).withEffect(EnchiridionEnchantmentEffectComponents.RUN_FUNCTIONS_ON_FISHING_LOOT, List.of(
+                        new RunFunctionOnLootEffect(List.of(
+                                SetItemDamageFunction.setDamage(UniformGenerator.between(0.15F, 0.4F), true).build()
+                        ), ItemPredicate.Builder.item().of(ItemTags.DURABILITY_ENCHANTABLE).build()),
+                        new RunFunctionOnLootEffect(List.of(
+                                new SetEnchantmentsFunction.Builder().build(),
+                                new EnchantWithLevelsFunction.Builder(ConstantValue.exactly(35.0F)).fromOptions(enchantments.getOrThrow(EnchantmentTags.ON_RANDOM_LOOT)).build()
+                        ), ItemPredicate.Builder.item().of(Enchiridion.ItemTags.INCLUSIVE_ENCHANTABLES).build(), BuiltInLootTables.FISHING_TREASURE)
+                ))
+                .build(RELIABLE.location());
 
         context.register(ASHES_CURSE, ashesCurse);
         context.register(BARDING, barding);
@@ -206,5 +230,6 @@ public class EnchiridionEnchantments {
         context.register(ICE_STRIKE, iceStrike);
         context.register(JOUSTING, jousting);
         context.register(REACH, reach);
+        context.register(RELIABLE, reliable);
     }
 }

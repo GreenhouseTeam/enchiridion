@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
@@ -95,7 +96,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             EnchiridionEnchantments.DREDGE,
                             EnchiridionEnchantments.EXHILARATING,
                             EnchiridionEnchantments.ICE_STRIKE,
-                            EnchiridionEnchantments.REACH
+                            EnchiridionEnchantments.REACH,
+                            EnchiridionEnchantments.RELIABLE
                     );
             getOrCreateTagBuilder(EnchantmentTags.TREASURE)
                     .add(
@@ -151,7 +153,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SWIFT_SNEAK,
                             EnchiridionEnchantments.EXHILARATING,
                             EnchiridionEnchantments.ICE_STRIKE,
-                            EnchiridionEnchantments.REACH
+                            EnchiridionEnchantments.REACH,
+                            EnchiridionEnchantments.RELIABLE
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.TERTIARY_CATEGORY)
                     .add(
@@ -233,6 +236,10 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(Enchiridion.ItemTags.ICE_STRIKE_PRIMARY_ENCHANTABLE);
             getOrCreateTagBuilder(Enchiridion.ItemTags.PICKAXE_ENCHANTABLE)
                     .forceAddTag(ItemTags.PICKAXES);
+
+            getOrCreateTagBuilder(Enchiridion.ItemTags.INCLUSIVE_ENCHANTABLES)
+                    .forceAddTag(ConventionalItemTags.ENCHANTABLES)
+                    .add(Items.BOOK);
         }
     }
 

@@ -57,6 +57,8 @@ public class Enchiridion {
         public static final TagKey<Item> PICKAXE_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/pickaxe"));
         public static final TagKey<Item> ICE_STRIKE_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_strike"));
         public static final TagKey<Item> ICE_STRIKE_PRIMARY_ENCHANTABLE = TagKey.create(Registries.ITEM, asResource("enchantable/ice_strike_primary"));
+
+        public static final TagKey<Item> INCLUSIVE_ENCHANTABLES = TagKey.create(Registries.ITEM, asResource("inclusive_enchantables"));
     }
 
     public static class FluidTags {
