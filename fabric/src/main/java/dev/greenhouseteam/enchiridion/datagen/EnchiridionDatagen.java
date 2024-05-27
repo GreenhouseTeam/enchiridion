@@ -95,6 +95,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(
                             EnchiridionEnchantments.DREDGE,
                             EnchiridionEnchantments.EXHILARATING,
+                            EnchiridionEnchantments.FORECAST,
                             EnchiridionEnchantments.ICE_STRIKE,
                             EnchiridionEnchantments.REACH,
                             EnchiridionEnchantments.RELIABLE
@@ -152,6 +153,7 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SWEEPING_EDGE,
                             Enchantments.SWIFT_SNEAK,
                             EnchiridionEnchantments.EXHILARATING,
+                            EnchiridionEnchantments.FORECAST,
                             EnchiridionEnchantments.ICE_STRIKE,
                             EnchiridionEnchantments.REACH,
                             EnchiridionEnchantments.RELIABLE

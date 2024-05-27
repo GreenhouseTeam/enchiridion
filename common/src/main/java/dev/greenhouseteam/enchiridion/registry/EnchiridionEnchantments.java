@@ -51,21 +51,18 @@ import net.minecraft.world.item.enchantment.effects.Ignite;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.EnchantWithLevelsFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemDamageFunction;
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.predicates.WeatherCheck;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.EnchantmentLevelProvider;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.List;
@@ -77,6 +74,7 @@ public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> CRUMBLE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("crumble"));
     public static final ResourceKey<Enchantment> DREDGE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("dredge"));
     public static final ResourceKey<Enchantment> EXHILARATING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("exhilarating"));
+    public static final ResourceKey<Enchantment> FORECAST = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("forecast"));
     public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> JOUSTING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("jousting"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reach"));
@@ -188,6 +186,14 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchiridionEnchantmentEffectComponents.PREVENT_HUNGER_CONSUMPTION, new PreventHungerConsumptionEffect(false, true, false))
                 .build(EXHILARATING.location());
+        Enchantment forecast = Enchantment.enchantment(
+                        Enchantment.definition(fishingEnchantable, 1, 2, Enchantment.dynamicCost(10, 5), Enchantment.dynamicCost(40, 5), 2, EquipmentSlotGroup.MAINHAND)
+                ).withEffect(EnchantmentEffectComponents.FISHING_LUCK_BONUS, new AddValue(LevelBasedValue.perLevel(0.5F, 0.5F)),
+                        WeatherCheck.weather().setRaining(true)
+                                .and(LootItemEntityPropertyCondition.hasProperties(
+                                        LootContext.EntityTarget.THIS,
+                                        EntityPredicate.Builder.entity().located(LocationPredicate.Builder.location().setCanSeeSky(true))))
+                ).build(FORECAST.location());
         Enchantment iceStrike = Enchantment.enchantment(
                 Enchantment.definition(iceStrikeEnchantable, iceStrikePrimaryEnchantable, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND)
                 ).exclusiveWith(elementalExclusiveSet)
@@ -227,6 +233,7 @@ public class EnchiridionEnchantments {
         context.register(CRUMBLE, crumble);
         context.register(DREDGE, dredge);
         context.register(EXHILARATING, exhilarating);
+        context.register(FORECAST, forecast);
         context.register(ICE_STRIKE, iceStrike);
         context.register(JOUSTING, jousting);
         context.register(REACH, reach);
