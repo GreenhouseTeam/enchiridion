@@ -48,6 +48,7 @@ import net.minecraft.world.item.enchantment.effects.AllOf;
 import net.minecraft.world.item.enchantment.effects.DamageEntity;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.Ignite;
+import net.minecraft.world.item.enchantment.effects.MultiplyValue;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -74,6 +75,7 @@ public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> CRUMBLE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("crumble"));
     public static final ResourceKey<Enchantment> DREDGE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("dredge"));
     public static final ResourceKey<Enchantment> EXHILARATING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("exhilarating"));
+    public static final ResourceKey<Enchantment> EXPERIENCED = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("experienced"));
     public static final ResourceKey<Enchantment> FORECAST = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("forecast"));
     public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> JOUSTING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("jousting"));
@@ -186,8 +188,12 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchiridionEnchantmentEffectComponents.PREVENT_HUNGER_CONSUMPTION, new PreventHungerConsumptionEffect(false, true, false))
                 .build(EXHILARATING.location());
+        Enchantment experienced = Enchantment.enchantment(
+                        Enchantment.definition(fishingEnchantable, 1, 2, Enchantment.dynamicCost(15, 6), Enchantment.dynamicCost(45, 5), 3, EquipmentSlotGroup.MAINHAND)
+                ).withEffect(EnchiridionEnchantmentEffectComponents.FISHING_EXPERIENCE_BONUS, new MultiplyValue(LevelBasedValue.perLevel(2.0F, 1.0F)))
+                .build(EXPERIENCED.location());
         Enchantment forecast = Enchantment.enchantment(
-                        Enchantment.definition(fishingEnchantable, 1, 2, Enchantment.dynamicCost(10, 5), Enchantment.dynamicCost(40, 5), 2, EquipmentSlotGroup.MAINHAND)
+                        Enchantment.definition(fishingEnchantable, 3, 2, Enchantment.dynamicCost(10, 5), Enchantment.dynamicCost(40, 5), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchantmentEffectComponents.FISHING_LUCK_BONUS, new AddValue(LevelBasedValue.perLevel(0.5F, 0.5F)),
                         WeatherCheck.weather().setRaining(true)
                                 .and(LootItemEntityPropertyCondition.hasProperties(
@@ -216,7 +222,7 @@ public class EnchiridionEnchantments {
                 ).withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(0.5F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
                 .build(REACH.location());
         Enchantment reliable = Enchantment.enchantment(
-                        Enchantment.definition(fishingEnchantable, 1, 1, Enchantment.constantCost(5), Enchantment.constantCost(12), 2, EquipmentSlotGroup.MAINHAND)
+                        Enchantment.definition(fishingEnchantable, 3, 1, Enchantment.constantCost(5), Enchantment.constantCost(12), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchiridionEnchantmentEffectComponents.RUN_FUNCTIONS_ON_FISHING_LOOT, List.of(
                         new RunFunctionOnLootEffect(List.of(
                                 SetItemDamageFunction.setDamage(UniformGenerator.between(0.15F, 0.4F), true).build()
@@ -233,6 +239,7 @@ public class EnchiridionEnchantments {
         context.register(CRUMBLE, crumble);
         context.register(DREDGE, dredge);
         context.register(EXHILARATING, exhilarating);
+        context.register(EXPERIENCED, experienced);
         context.register(FORECAST, forecast);
         context.register(ICE_STRIKE, iceStrike);
         context.register(JOUSTING, jousting);

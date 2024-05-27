@@ -13,6 +13,7 @@
     "EnchantmentHelperMixin",
     "EnchantmentMenuMixin",
     "EntityMixin",
+    "FishingHookMixin",
     "ItemEnchantmentsAccessor",
     "LivingEntityMixin",
     "LootParamsAccessor",
