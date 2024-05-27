@@ -193,7 +193,7 @@ public class EnchiridionEnchantments {
                 ).withEffect(EnchiridionEnchantmentEffectComponents.FISHING_EXPERIENCE_BONUS, new MultiplyValue(LevelBasedValue.perLevel(2.0F, 1.0F)))
                 .build(EXPERIENCED.location());
         Enchantment forecast = Enchantment.enchantment(
-                        Enchantment.definition(fishingEnchantable, 3, 2, Enchantment.dynamicCost(10, 5), Enchantment.dynamicCost(40, 5), 2, EquipmentSlotGroup.MAINHAND)
+                        Enchantment.definition(fishingEnchantable, 2, 2, Enchantment.dynamicCost(10, 5), Enchantment.dynamicCost(40, 5), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchantmentEffectComponents.FISHING_LUCK_BONUS, new AddValue(LevelBasedValue.perLevel(0.5F, 0.5F)),
                         WeatherCheck.weather().setRaining(true)
                                 .and(LootItemEntityPropertyCondition.hasProperties(
@@ -222,7 +222,7 @@ public class EnchiridionEnchantments {
                 ).withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(0.5F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
                 .build(REACH.location());
         Enchantment reliable = Enchantment.enchantment(
-                        Enchantment.definition(fishingEnchantable, 3, 1, Enchantment.constantCost(5), Enchantment.constantCost(12), 2, EquipmentSlotGroup.MAINHAND)
+                        Enchantment.definition(fishingEnchantable, 2, 1, Enchantment.constantCost(5), Enchantment.constantCost(12), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchiridionEnchantmentEffectComponents.RUN_FUNCTIONS_ON_FISHING_LOOT, List.of(
                         new RunFunctionOnLootEffect(List.of(
                                 SetItemDamageFunction.setDamage(UniformGenerator.between(0.15F, 0.4F), true).build()
