@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class EnchiridionEnchantmentEffectComponents {
     public static final DataComponentType<List<Optional<LootItemCondition>>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<Optional<LootItemCondition>>>builder()
-            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).optionalFieldOf("unused").codec().listOf())
+            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).optionalFieldOf("").codec().listOf())
             .build();
     public static final DataComponentType<List<ConditionalEffect<EnchantmentLocationBasedEffect>>> TARGET_BLOCK_CHANGED = DataComponentType.<List<ConditionalEffect<EnchantmentLocationBasedEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentLocationBasedEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_BLOCK).listOf())
