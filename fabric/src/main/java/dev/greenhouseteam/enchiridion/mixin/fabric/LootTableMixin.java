@@ -51,7 +51,6 @@ public class LootTableMixin {
                 for (EquipmentSlot slot1 : EquipmentSlot.values()) {
                     if (living.getItemBySlot(slot1).equals(params.getParameter(LootContextParams.TOOL))) {
                         slot = slot1;
-                        paramBuilder.withParameter(EnchiridionLootContextParams.EQUIPMENT_SLOT, slot);
                         break;
                     }
                 }
