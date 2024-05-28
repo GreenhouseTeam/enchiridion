@@ -19,13 +19,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EnchiridionEnchantmentEffectComponents {
     public static final DataComponentType<List<ConditionalEffect<ResourceKey<LootTable>>>> ADDITIONAL_FISHING_LOOT = DataComponentType.<List<ConditionalEffect<ResourceKey<LootTable>>>>builder()
             .persistent(ConditionalEffect.codec(ResourceKey.codec(Registries.LOOT_TABLE), EnchiridionLootContextParamSets.ENCHANTED_FISHING).listOf())
             .build();
-    public static final DataComponentType<List<LootItemCondition>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<LootItemCondition>>builder()
-            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).listOf())
+    public static final DataComponentType<List<Optional<LootItemCondition>>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<Optional<LootItemCondition>>>builder()
+            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).optionalFieldOf("unused").codec().listOf())
             .build();
     public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> FISHING_EXPERIENCE_BONUS = DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_FISHING).listOf())
