@@ -3,28 +3,23 @@ package dev.greenhouseteam.enchiridion.registry;
 import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
 import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
 import dev.greenhouseteam.enchiridion.registry.internal.RegistrationCallback;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.Unit;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.TargetedConditionalEffect;
-import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
-import javax.swing.Icon;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class EnchiridionEnchantmentEffectComponents {
-    public static final DataComponentType<List<LootItemCondition>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<LootItemCondition>>builder()
-            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).listOf())
+    public static final DataComponentType<List<Optional<LootItemCondition>>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<Optional<LootItemCondition>>>builder()
+            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).optionalFieldOf("unused").codec().listOf())
             .build();
     public static final DataComponentType<List<ConditionalEffect<EnchantmentLocationBasedEffect>>> TARGET_BLOCK_CHANGED = DataComponentType.<List<ConditionalEffect<EnchantmentLocationBasedEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentLocationBasedEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_BLOCK).listOf())
