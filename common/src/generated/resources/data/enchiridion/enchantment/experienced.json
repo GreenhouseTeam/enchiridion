@@ -10,7 +10,7 @@
           "type": "minecraft:multiply",
           "factor": {
             "type": "minecraft:linear",
-            "base": 2.0,
+            "base": 1.5,
             "per_level_above_first": 1.0
           }
         }

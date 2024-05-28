@@ -190,7 +190,7 @@ public class EnchiridionEnchantments {
                 .build(EXHILARATING.location());
         Enchantment experienced = Enchantment.enchantment(
                         Enchantment.definition(fishingEnchantable, 1, 2, Enchantment.dynamicCost(15, 6), Enchantment.dynamicCost(45, 5), 3, EquipmentSlotGroup.MAINHAND)
-                ).withEffect(EnchiridionEnchantmentEffectComponents.FISHING_EXPERIENCE_BONUS, new MultiplyValue(LevelBasedValue.perLevel(2.0F, 1.0F)))
+                ).withEffect(EnchiridionEnchantmentEffectComponents.FISHING_EXPERIENCE_BONUS, new MultiplyValue(LevelBasedValue.perLevel(1.5F, 1.0F)))
                 .build(EXPERIENCED.location());
         Enchantment forecast = Enchantment.enchantment(
                         Enchantment.definition(fishingEnchantable, 2, 2, Enchantment.dynamicCost(10, 5), Enchantment.dynamicCost(40, 5), 2, EquipmentSlotGroup.MAINHAND)
