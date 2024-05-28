@@ -38,7 +38,7 @@ public class EnchiridionLootContextParamSets {
             .required(LootContextParams.TOOL)
             .required(LootContextParams.ENCHANTMENT_LEVEL)
             .required(LootContextParams.ORIGIN)
-            .required(LootContextParams.THIS_ENTITY)
+            .optional(LootContextParams.THIS_ENTITY)
             .build();
 
     public static final LootContextParamSet VEHICLE_ENCHANTED = LootContextParamSet.builder()
