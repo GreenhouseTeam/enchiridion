@@ -21,6 +21,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -51,7 +52,6 @@ public class LootTableMixin {
                 for (EquipmentSlot slot1 : EquipmentSlot.values()) {
                     if (living.getItemBySlot(slot1).equals(params.getParameter(LootContextParams.TOOL))) {
                         slot = slot1;
-                        paramBuilder.withParameter(EnchiridionLootContextParams.EQUIPMENT_SLOT, slot);
                         break;
                     }
                 }
@@ -59,7 +59,7 @@ public class LootTableMixin {
             EquipmentSlot finalSlot = slot;
             for (Map.Entry<Holder<Enchantment>, Integer> entry : params.getParameter(LootContextParams.TOOL).getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ADDITIONAL_FISHING_LOOT).isEmpty() && (finalSlot == null && !params.hasParam(LootContextParams.THIS_ENTITY) || entry.getKey().value().matchingSlot(finalSlot))).toList()) {
                 paramBuilder.withOptionalParameter(LootContextParams.ENCHANTMENT_LEVEL, entry.getValue());
-                LootParams params2 = paramBuilder.create(EnchiridionLootContextParamSets.ENCHANTED_FISHING);
+                LootParams params2 = paramBuilder.create(LootContextParamSets.ENCHANTED_ENTITY);
                 LootContext context = new LootContext.Builder(params2).create(Optional.empty());
                 for (ConditionalEffect<ResourceKey<LootTable>> effect : entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.ADDITIONAL_FISHING_LOOT)) {
                     if (effect.effect() == enchiridion$previousTable)
@@ -72,7 +72,7 @@ public class LootTableMixin {
             }
             for (Map.Entry<Holder<Enchantment>, Integer> entry : params.getParameter(LootContextParams.TOOL).getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.RUN_FUNCTIONS_ON_FISHING_LOOT).isEmpty() && (finalSlot == null && !params.hasParam(LootContextParams.THIS_ENTITY) || entry.getKey().value().matchingSlot(finalSlot))).toList()) {
                 paramBuilder.withOptionalParameter(LootContextParams.ENCHANTMENT_LEVEL, entry.getValue());
-                LootParams params2 = paramBuilder.create(EnchiridionLootContextParamSets.ENCHANTED_FISHING);
+                LootParams params2 = paramBuilder.create(LootContextParamSets.ENCHANTED_ENTITY);
                 LootContext context = new LootContext.Builder(params2).create(Optional.empty());
                 for (ConditionalEffect<List<RunFunctionOnLootEffect>> effect : entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.RUN_FUNCTIONS_ON_FISHING_LOOT)) {
                     if (!effect.matches(context))

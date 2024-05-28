@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -53,7 +54,7 @@ public abstract class FishingHookMixin extends Projectile {
                 paramBuilder.withParameter(LootContextParams.ENCHANTMENT_LEVEL, entry.getValue());
                 paramBuilder.withParameter(LootContextParams.THIS_ENTITY, player);
 
-                LootContext context = new LootContext.Builder(paramBuilder.create(EnchiridionLootContextParamSets.ENCHANTED_FISHING)).create(Optional.empty());
+                LootContext context = new LootContext.Builder(paramBuilder.create(LootContextParamSets.ENCHANTED_ENTITY)).create(Optional.empty());
 
                 for (ConditionalEffect<EnchantmentValueEffect> effect : entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.FISHING_EXPERIENCE_BONUS)) {
                     if (!effect.matches(context))

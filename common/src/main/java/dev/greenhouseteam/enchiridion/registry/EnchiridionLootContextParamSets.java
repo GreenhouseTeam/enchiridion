@@ -34,14 +34,6 @@ public class EnchiridionLootContextParamSets {
             .optional(LootContextParams.ATTACKING_ENTITY)
             .build();
 
-    public static final LootContextParamSet ENCHANTED_FISHING = LootContextParamSet.builder()
-            .required(LootContextParams.TOOL)
-            .required(LootContextParams.ENCHANTMENT_LEVEL)
-            .required(LootContextParams.ORIGIN)
-            .required(LootContextParams.THIS_ENTITY)
-            .optional(EnchiridionLootContextParams.EQUIPMENT_SLOT)
-            .build();
-
     public static final LootContextParamSet VEHICLE_ENCHANTED = LootContextParamSet.builder()
             .required(LootContextParams.THIS_ENTITY)
             .required(EnchiridionLootContextParams.VEHICLE)
