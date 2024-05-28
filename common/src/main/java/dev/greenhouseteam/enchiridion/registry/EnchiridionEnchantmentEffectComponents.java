@@ -26,7 +26,7 @@ public class EnchiridionEnchantmentEffectComponents {
             .persistent(ConditionalEffect.codec(ResourceKey.codec(Registries.LOOT_TABLE), EnchiridionLootContextParamSets.ENCHANTED_FISHING).listOf())
             .build();
     public static final DataComponentType<List<Optional<LootItemCondition>>> ALLOW_FIRING_WITHOUT_PROJECTILE = DataComponentType.<List<Optional<LootItemCondition>>>builder()
-            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).optionalFieldOf("unused").codec().listOf())
+            .persistent(ConditionalEffect.conditionCodec(LootContextParamSets.ENCHANTED_ITEM).optionalFieldOf("").codec().listOf())
             .build();
     public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> FISHING_EXPERIENCE_BONUS = DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_FISHING).listOf())
