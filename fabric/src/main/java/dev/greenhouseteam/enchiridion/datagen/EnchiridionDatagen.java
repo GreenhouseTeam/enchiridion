@@ -98,7 +98,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(EnchiridionEnchantments.CRUMBLE);
 
             getOrCreateTagBuilder(EnchantmentTags.MINING_EXCLUSIVE)
-                    .add(EnchiridionEnchantments.CRUMBLE);
+                    .add(EnchiridionEnchantments.CRUMBLE)
+                    .add(EnchiridionEnchantments.SEISMIC_SENSE);
 
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.ELEMENTAL_EXCLUSIVE)
                     .add(Enchantments.FIRE_ASPECT)
@@ -136,7 +137,8 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                             Enchantments.SWIFT_SNEAK,
                             EnchiridionEnchantments.EXHILARATING,
                             EnchiridionEnchantments.ICE_STRIKE,
-                            EnchiridionEnchantments.REACH
+                            EnchiridionEnchantments.REACH,
+                            EnchiridionEnchantments.SEISMIC_SENSE
                     );
             getOrCreateTagBuilder(Enchiridion.EnchantmentTags.TERTIARY_CATEGORY)
                     .add(
@@ -178,6 +180,11 @@ public class EnchiridionDatagen implements DataGeneratorEntrypoint {
                     .add(Blocks.END_STONE);
             getOrCreateTagBuilder(Enchiridion.BlockTags.HARDER_STONE)
                     .add(Blocks.DEEPSLATE)
+                    .add(Blocks.END_STONE);
+            getOrCreateTagBuilder(Enchiridion.BlockTags.SEISMIC_SENSE_BLACKLIST)
+                    .add(Blocks.STONE)
+                    .add(Blocks.DEEPSLATE)
+                    .add(Blocks.NETHERRACK)
                     .add(Blocks.END_STONE);
         }
     }

@@ -1,29 +1,28 @@
 package dev.greenhouseteam.enchiridion;
 
 import com.google.common.collect.ImmutableList;
+import dev.greenhouseteam.enchiridion.command.BlockHighlightCommand;
 import dev.greenhouseteam.enchiridion.enchantment.category.EnchantmentCategory;
 import dev.greenhouseteam.enchiridion.enchantment.category.ItemEnchantmentCategories;
+import dev.greenhouseteam.enchiridion.enchantment.effects.BlockMinedEffect;
 import dev.greenhouseteam.enchiridion.mixin.CreativeModeTabsAccessor;
 import dev.greenhouseteam.enchiridion.mixin.fabric.LootPoolAccessor;
 import dev.greenhouseteam.enchiridion.mixin.fabric.LootTableBuilderAccessor;
+import dev.greenhouseteam.enchiridion.network.clientbound.SetOutlinedBlocksClientboundPacket;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantScrollIndexClientboundPacket;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantmentLevelUpSeedsPacket;
 import dev.greenhouseteam.enchiridion.network.serverbound.SyncEnchantScrollIndexServerboundPacket;
 import dev.greenhouseteam.enchiridion.platform.EnchiridionPlatformHelperFabric;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionDataComponents;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantmentEffectComponents;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionEnchantments;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionEntityEnchantmentEffects;
-import dev.greenhouseteam.enchiridion.registry.EnchiridionRegistries;
+import dev.greenhouseteam.enchiridion.registry.*;
 import dev.greenhouseteam.enchiridion.util.ClientRegistryAccessReference;
 import dev.greenhouseteam.enchiridion.util.CreativeTabUtil;
 import dev.greenhouseteam.enchiridion.util.EnchiridionUtil;
 import dev.greenhouseteam.enchiridion.util.TagUtil;
-import dev.greenhouseteam.enchiridion.util.TargetUtil;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -49,17 +48,27 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.ConditionalEffect;
+import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +157,41 @@ public class EnchiridionFabric implements ModInitializer {
             ResourceManagerHelper.registerBuiltinResourcePack(Enchiridion.asResource("default_enchanted_books"), modContainer, Component.translatable("resourcePack.enchiridion.default_enchanted_books.name"), ResourcePackActivationType.NORMAL);
             ResourceManagerHelper.registerBuiltinResourcePack(Enchiridion.asResource("vanilla_enchantment_modifications"), modContainer, Component.translatable("dataPack.enchiridion.vanilla_enchantment_modifications.name"), ResourcePackActivationType.DEFAULT_ENABLED);
         });
+        if (Enchiridion.getHelper().isDevelopmentEnvironment()) {
+            CommandRegistrationCallback.EVENT.register((dispatcher, context, commandSelection) -> {
+                BlockHighlightCommand.register(dispatcher, context);
+            });
+        }
+
+        PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
+            var miningEnchantmentComponents = player.getMainHandItem().getEnchantments().entrySet().stream().filter(entry -> entry.getKey().isBound() && !entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.BLOCK_BROKEN).isEmpty()).map(entry -> Triple.of(entry.getKey(), entry.getKey().value().getEffects(EnchiridionEnchantmentEffectComponents.BLOCK_BROKEN), entry.getIntValue())).toList();
+            if (miningEnchantmentComponents.isEmpty()) return;
+            ServerPlayer serverPlayer = (ServerPlayer) player;
+            LootParams.Builder params = new LootParams.Builder(serverPlayer.serverLevel());
+            params.withParameter(LootContextParams.BLOCK_STATE, state);
+            params.withParameter(LootContextParams.ORIGIN, pos.getCenter());
+            params.withParameter(LootContextParams.TOOL, player.getMainHandItem());
+            params.withParameter(LootContextParams.THIS_ENTITY, player);
+            params.withOptionalParameter(LootContextParams.BLOCK_ENTITY, player.level().getBlockEntity(pos));
+            for (Triple<Holder<Enchantment>, List<ConditionalEffect<EnchantmentLocationBasedEffect>>, Integer> entry : miningEnchantmentComponents) {
+                for (ConditionalEffect<EnchantmentLocationBasedEffect> effect : entry.getMiddle()) {
+                    params.withParameter(LootContextParams.ENCHANTMENT_LEVEL, entry.getRight());
+                    LootContext context = new LootContext.Builder(params.create(EnchiridionLootContextParamSets.ENCHANTED_BLOCK)).create(Optional.empty());
+                    if (effect.matches(context)) {
+                        if (effect.effect() instanceof BlockMinedEffect blockMinedEffect) {
+                            blockMinedEffect.onBlockMined(
+                                    (ServerLevel) player.level(),
+                                    entry.getRight(),
+                                    new EnchantedItemInUse(player.getMainHandItem(), EquipmentSlot.MAINHAND, player),
+                                    player,
+                                    pos.getCenter(),
+                                    state
+                            );
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static void registerPackets() {
@@ -155,6 +199,7 @@ public class EnchiridionFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SyncEnchantedFrozenStateClientboundPacket.TYPE, SyncEnchantedFrozenStateClientboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncEnchantmentLevelUpSeedsPacket.TYPE, SyncEnchantmentLevelUpSeedsPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SyncEnchantScrollIndexServerboundPacket.TYPE, SyncEnchantScrollIndexServerboundPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(SetOutlinedBlocksClientboundPacket.TYPE, SetOutlinedBlocksClientboundPacket.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(SyncEnchantScrollIndexServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
     }
@@ -163,6 +208,7 @@ public class EnchiridionFabric implements ModInitializer {
         EnchiridionDataComponents.registerAll(Registry::register);
         EnchiridionEnchantmentEffectComponents.registerAll(Registry::register);
         EnchiridionEntityEnchantmentEffects.registerAll(Registry::register);
+        EnchiridionLocationEnchantmentEffects.registerAll(Registry::register);
 
         DynamicRegistries.registerSynced(EnchiridionRegistries.ENCHANTMENT_CATEGORY, EnchantmentCategory.DIRECT_CODEC);
     }

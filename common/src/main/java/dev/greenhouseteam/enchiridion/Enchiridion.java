@@ -33,6 +33,7 @@ public class Enchiridion {
     public static class BlockTags {
         public static final TagKey<Block> BASE_STONE = TagKey.create(Registries.BLOCK, asResource("base_stone"));
         public static final TagKey<Block> HARDER_STONE = TagKey.create(Registries.BLOCK, asResource("harder_stone"));
+        public static final TagKey<Block> SEISMIC_SENSE_BLACKLIST = TagKey.create(Registries.BLOCK, asResource("seismic_sense_blacklist"));
     }
 
     public static class EnchantmentTags {
