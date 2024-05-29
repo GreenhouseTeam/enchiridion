@@ -8,7 +8,7 @@
       {
         "effect": {
           "type": "enchiridion:highlight_blocks",
-          "blacklist": "minecraft:base_stone_overworld",
+          "blacklist": "enchiridion:seismic_sense_blacklist",
           "duration": {
             "type": "minecraft:linear",
             "base": 40.0,
