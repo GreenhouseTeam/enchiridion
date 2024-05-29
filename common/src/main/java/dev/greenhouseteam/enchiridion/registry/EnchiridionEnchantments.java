@@ -180,8 +180,8 @@ public class EnchiridionEnchantments {
                 ).withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(0.5F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
                 .build(REACH.location());
         Enchantment seismicSense = Enchantment.enchantment(
-                Enchantment.definition(miningEnchantable, 1, 1, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)
-                ).withEffect(EnchiridionEnchantmentEffectComponents.BLOCK_BROKEN, new HighlightMinedBlocksEffect(LevelBasedValue.perLevel(40.0f, 20.0f), LevelBasedValue.perLevel(3.0f, 2.0f), BlockTags.BASE_STONE_OVERWORLD, false))
+                Enchantment.definition(miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)
+                ).withEffect(EnchiridionEnchantmentEffectComponents.BLOCK_BROKEN, new HighlightMinedBlocksEffect(LevelBasedValue.perLevel(40.0F, 20.0F), LevelBasedValue.perLevel(3.0F, 2.0F), BlockTags.BASE_STONE_OVERWORLD, false))
                 .build(SEISMIC_SENSE.location());
 
         context.register(ASHES_CURSE, ashesCurse);
