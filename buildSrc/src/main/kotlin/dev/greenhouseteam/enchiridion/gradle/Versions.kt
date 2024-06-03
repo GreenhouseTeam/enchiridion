@@ -4,7 +4,7 @@ object Versions {
     const val MOD = "1.0.0-alpha.1"
 
     const val MINECRAFT = "1.21"
-    const val INTERNAL_MINECRAFT = "1.21-pre2"
+    const val INTERNAL_MINECRAFT = "1.21-pre1"
 
     const val FABRIC_API = "0.99.4+1.21"
     const val FABRIC_LOADER = "0.15.11"
