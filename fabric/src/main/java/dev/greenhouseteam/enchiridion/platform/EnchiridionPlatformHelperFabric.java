@@ -6,10 +6,12 @@ import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenSta
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantmentLevelUpSeedsPacket;
 import dev.greenhouseteam.enchiridion.registry.EnchiridionAttachments;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -17,6 +19,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,5 +122,10 @@ public class EnchiridionPlatformHelperFabric implements EnchiridionPlatformHelpe
     @Override
     public boolean isClientThread() {
         return Thread.currentThread() == ((MinecraftAccessor) Minecraft.getInstance()).enchiridion$getGameThread();
+    }
+
+    @Override
+    public boolean isEnchantmentCompatibleAcceptable(ItemStack stack, Holder<Enchantment> enchantment) {
+        return stack.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE);
     }
 }
