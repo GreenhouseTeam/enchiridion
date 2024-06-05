@@ -1,12 +1,7 @@
 package dev.greenhouseteam.enchiridion.registry;
 
 import dev.greenhouseteam.enchiridion.Enchiridion;
-import dev.greenhouseteam.enchiridion.enchantment.effects.ExtinguishEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.FreezeEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.PreventHungerConsumptionEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.RidingConditionalEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.RidingEntityEffect;
-import dev.greenhouseteam.enchiridion.enchantment.effects.RidingTarget;
+import dev.greenhouseteam.enchiridion.enchantment.effects.*;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -22,6 +17,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
@@ -63,6 +59,7 @@ public class EnchiridionEnchantments {
     public static final ResourceKey<Enchantment> ICE_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ice_strike"));
     public static final ResourceKey<Enchantment> JOUSTING = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("jousting"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("reach"));
+    public static final ResourceKey<Enchantment> SEISMIC_SENSE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("seismic_sense"));
 
     public static final ResourceKey<Enchantment> ASHES_CURSE = ResourceKey.create(Registries.ENCHANTMENT, Enchiridion.asResource("ashes_curse"));
 
@@ -182,6 +179,10 @@ public class EnchiridionEnchantments {
                 Enchantment.definition(miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 7), Enchantment.constantCost(50), 2, EquipmentSlotGroup.MAINHAND)
                 ).withEffect(EnchantmentEffectComponents.ATTRIBUTES, new EnchantmentAttributeEffect("enchantment.enchiridion.reach", Attributes.BLOCK_INTERACTION_RANGE, LevelBasedValue.perLevel(0.5F, 0.5F), AttributeModifier.Operation.ADD_VALUE, UUID.fromString("164c937c-f04c-4730-b8e9-d299a3a187fa")))
                 .build(REACH.location());
+        Enchantment seismicSense = Enchantment.enchantment(
+                Enchantment.definition(miningEnchantable, 1, 2, Enchantment.dynamicCost(12, 4), Enchantment.constantCost(35), 1, EquipmentSlotGroup.MAINHAND)
+                ).withEffect(EnchiridionEnchantmentEffectComponents.BLOCK_BROKEN, new HighlightMinedBlocksEffect(LevelBasedValue.perLevel(40.0F, 20.0F), LevelBasedValue.perLevel(3.0F, 2.0F), Enchiridion.BlockTags.SEISMIC_SENSE_BLACKLIST, false))
+                .build(SEISMIC_SENSE.location());
 
         context.register(ASHES_CURSE, ashesCurse);
         context.register(BARDING, barding);
@@ -190,5 +191,6 @@ public class EnchiridionEnchantments {
         context.register(ICE_STRIKE, iceStrike);
         context.register(JOUSTING, jousting);
         context.register(REACH, reach);
+        context.register(SEISMIC_SENSE, seismicSense);
     }
 }

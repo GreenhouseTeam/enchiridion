@@ -26,6 +26,7 @@
     "client.ContainerEventHandlerMixin",
     "client.EnchantmentScreenMixin",
     "client.ItemRendererMixin",
+    "client.LevelRendererMixin",
     "client.LivingEntityMixin",
     "client.ModelManagerAccessor"
   ],

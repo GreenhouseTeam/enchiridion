@@ -42,6 +42,9 @@ public class EnchiridionEnchantmentEffectComponents {
     public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> VEHICLE_DAMAGE_PROTECTION = DataComponentType.<List<ConditionalEffect<EnchantmentValueEffect>>>builder()
             .persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, EnchiridionLootContextParamSets.VEHICLE_ENCHANTED_DAMAGE).listOf())
             .build();
+    public static final DataComponentType<List<ConditionalEffect<EnchantmentLocationBasedEffect>>> BLOCK_BROKEN = DataComponentType.<List<ConditionalEffect<EnchantmentLocationBasedEffect>>>builder()
+            .persistent(ConditionalEffect.codec(EnchantmentLocationBasedEffect.CODEC, EnchiridionLootContextParamSets.ENCHANTED_BLOCK).listOf())
+            .build();
 
     public static void registerAll(RegistrationCallback<DataComponentType<?>> callback) {
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("allow_firing_without_projectile"), ALLOW_FIRING_WITHOUT_PROJECTILE);
@@ -52,5 +55,6 @@ public class EnchiridionEnchantmentEffectComponents {
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("target_block_changed"), TARGET_BLOCK_CHANGED);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("vehicle_changed"), VEHICLE_CHANGED);
         callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("vehicle_damage_protection"), VEHICLE_DAMAGE_PROTECTION);
+        callback.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Enchiridion.asResource("block_broken"), BLOCK_BROKEN);
     }
 }
