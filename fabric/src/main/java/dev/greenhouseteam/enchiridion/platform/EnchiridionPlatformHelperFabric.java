@@ -1,5 +1,6 @@
 package dev.greenhouseteam.enchiridion.platform;
 
+import dev.greenhouseteam.enchiridion.Enchiridion;
 import dev.greenhouseteam.enchiridion.EnchiridionFabric;
 import dev.greenhouseteam.enchiridion.mixin.fabric.client.MinecraftAccessor;
 import dev.greenhouseteam.enchiridion.network.clientbound.SyncEnchantedFrozenStateClientboundPacket;
@@ -11,10 +12,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
